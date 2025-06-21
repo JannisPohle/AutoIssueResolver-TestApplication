@@ -1,0 +1,32 @@
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: Helpers/BuildTemplates
+      ref: main
+
+parameters:
+- name: 'majorVersion'
+  default: 0
+  type: number
+- name: 'minorVersion'
+  type: number
+  default: 1
+- name: patchVersion
+  default: 0
+  type: number
+  
+name: TestApplication-$(MajorVersion).$(MinorVersion).$(PatchVersion)$(VersionSuffix)-$(DayOfYear)$(rev:.r)
+
+extends:
+  template: Templates/build-template-library.yml@templates
+  parameters:
+    solutionName: 'TestLibrary.sln'
+    projectName: 'TestApplication'
+    buildConfiguration: 'Release'
+    isReleaseBuild: false
+    pushNuget: false
+    runSonarqube: true
+    majorVersion: ${{ parameters.majorVersion }}
+    minorVersion: ${{ parameters.minorVersion }}
+    patchVersion: ${{ parameters.patchVersion }}

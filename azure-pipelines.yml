@@ -18,7 +18,7 @@ parameters:
   
 variables:
 - name: ProjectName
-  value: ${{ parameters.projectName }}
+  value: 'TestApplication'
   # Version information and suffix can be used in pipeline name
 - name: MajorVersion
   value: ${{ parameters.majorVersion }}
@@ -49,7 +49,7 @@ stages:
         majorVersion: ${{ parameters.majorVersion }}
         minorVersion: ${{ parameters.minorVersion }}
         patchVersion: ${{ parameters.patchVersion }}
-        projectName: 'TestApplication'
+        projectName: $(ProjectName)
         buildConfiguration: 'Release'
         runSonarqube: true
         publishArm: false

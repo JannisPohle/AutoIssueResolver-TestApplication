@@ -16,17 +16,60 @@ parameters:
   default: 0
   type: number
   
+variables:
+- name: ProjectName
+  value: ${{ parameters.projectName }}
+  # Version information and suffix can be used in pipeline name
+- name: MajorVersion
+  value: ${{ parameters.majorVersion }}
+- name: MinorVersion
+  value: ${{ parameters.minorVersion }}
+- name: PatchVersion
+  value: ${{ parameters.patchVersion }}
+  # Only variables can be used within the counter method, no parameters. Starting the revision at 100, to have the same length in the revision for all versions (format below does not seem to support something like '3:000')
+- name: Revision
+  value: $[ counter(format('{0}.{1}.{2}', variables['MajorVersion'], variables['MinorVersion'], variables['PatchVersion']), 100) ]
+- name: VersionSuffix
+  value: '-dev'
+- name: Version
+  value: $[ format('{0}.{1}.{2}-dev{3}', variables['MajorVersion'], variables['MinorVersion'], variables['PatchVersion'], variables['Revision']) ]
+
 name: TestApplication-$(MajorVersion).$(MinorVersion).$(PatchVersion)$(VersionSuffix)-$(DayOfYear)$(rev:.r)
 
-extends:
-  template: Templates/build-template-library.yml@templates
-  parameters:
-    solutionName: 'TestApplication.sln'
-    projectName: 'TestApplication'
-    buildConfiguration: 'Release'
-    isReleaseBuild: false
-    pushNuget: false
-    runSonarqube: true
-    majorVersion: ${{ parameters.majorVersion }}
-    minorVersion: ${{ parameters.minorVersion }}
-    patchVersion: ${{ parameters.patchVersion }}
+stages:
+- stage: build
+  jobs:
+  - job: Build
+    pool: Default
+    steps:
+    - template: Steps/Build/build.yml@templates
+      parameters:
+        solutionName: 'TestApplication.sln'
+        isReleaseBuild: false
+        majorVersion: ${{ parameters.majorVersion }}
+        minorVersion: ${{ parameters.minorVersion }}
+        patchVersion: ${{ parameters.patchVersion }}
+        projectName: 'TestApplication'
+        buildConfiguration: 'Release'
+        runSonarqube: true
+        publishArm: false
+        publishX64: false
+        publishProject: ''
+  - job: Retain_Pipeline
+    pool: Default
+    dependsOn: Build
+    condition: and(succeeded(), not(canceled()), startsWith(variables['Build.SourceBranch'], 'main'))
+    steps:
+      - task: PowerShell@2
+        displayName: 'Retain on Success'
+        name: RetainOnSuccess
+        inputs:
+          failOnStderr: true
+          targetType: 'inline'
+          script: |
+            $contentType = "application/json";
+            $headers = @{ Authorization = 'Bearer $(System.AccessToken)' };
+            $rawRequest = @{ daysValid = 365; definitionId = $(System.DefinitionId); ownerId = 'User:$(Build.RequestedForId)'; protectPipeline = $false; runId = $(Build.BuildId) };
+            $request = ConvertTo-Json @($rawRequest);
+            $uri = "$(System.CollectionUri)$(System.TeamProject)/_apis/build/retention/leases?api-version=6.0-preview.1";
+            Invoke-RestMethod -uri $uri -method POST -Headers $headers -ContentType $contentType -Body $request;

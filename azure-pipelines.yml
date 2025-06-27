@@ -21,7 +21,7 @@ name: TestApplication-$(MajorVersion).$(MinorVersion).$(PatchVersion)$(VersionSu
 extends:
   template: Templates/build-template-library.yml@templates
   parameters:
-    solutionName: 'TestLibrary.sln'
+    solutionName: 'TestApplication.sln'
     projectName: 'TestApplication'
     buildConfiguration: 'Release'
     isReleaseBuild: false

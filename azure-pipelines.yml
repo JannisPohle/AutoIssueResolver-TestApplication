@@ -42,23 +42,88 @@ stages:
   - job: Build
     pool: Default
     steps:
-    - template: Steps/Build/build.yml@templates
-      parameters:
-        solutionName: 'TestApplication.sln'
-        isReleaseBuild: false
-        majorVersion: ${{ parameters.majorVersion }}
-        minorVersion: ${{ parameters.minorVersion }}
-        patchVersion: ${{ parameters.patchVersion }}
+
+    - checkout: self
+      clean: true
+      fetchDepth: 1000
+
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: '9.x'
+      displayName: 'Use dotnet 9'
+
+    - task: NodeTool@0
+      inputs:
+        versionSource: 'spec'
+        versionSpec: '>=20.15.x'
+      displayName: 'Use node 20'
+
+    - task: SonarQubePrepare@7
+      continueOnError: true
+      inputs:
+        SonarQube: 'SonarQube'
+        scannerMode: 'dotnet'
+        projectKey: $(ProjectName)
         projectName: $(ProjectName)
-        buildConfiguration: 'Release'
-        runSonarqube: true
-        publishArm: false
-        publishX64: false
-        publishProject: ''
+        projectVersion: ${{ format('{0}.{1}.{2}', parameters.majorVersion, parameters.minorVersion, parameters.patchVersion) }}
+        extraProperties: |
+          # Additional properties that will be passed to the scanner, 
+          # Put one key=value per line, example:
+          # sonar.exclusions=**/*.bin
+          sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)\**\*.trx
+          sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)\**\*coverage.opencover.xml
+          sonar.exclusions=**/Migrations/**/*
+          sonar.exclusions=**/*.razor
+
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'restore'
+        projects: 'TestApplication.sln'
+        feedsToUse: 'select'
+        vstsFeed: 'e13e9443-b520-40d4-813c-324c959de0fb'
+      displayName: 'Restore nuget packages'
+
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'build'
+        projects: 'TestApplication.sln'
+        arguments: "--configuration 'Release' --no-restore /p:Version=$(Version)"
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+      displayName: 'Build solution'
+
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'test'
+        projects: |
+          **/*[Tt]ests/*.csproj
+          !**/UI/*[Tt]ests/*.csproj
+        arguments: '--configuration "Release" --no-restore --no-build --collect "XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura,opencover'
+        publishTestResults: true
+      displayName: 'Run unit tests'
+      continueOnError: true
+
+    - task: PublishCodeCoverageResults@1
+      displayName: 'Publish code coverage report'
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+
+    - task: SonarQubeAnalyze@7
+      displayName: 'Run sonarqube analysis'
+      inputs:
+        jdkversion: 'JAVA_HOME'
+      continueOnError: true
+    - task: SonarQubePublish@7
+      displayName: 'Publish sonarqube analysis'
+      continueOnError: true
+      inputs:
+        pollingTimeoutSec: '300'
+
   - job: Retain_Pipeline
     pool: Default
     dependsOn: Build
-    condition: and(succeeded(), not(canceled()), startsWith(variables['Build.SourceBranch'], 'main'))
+    condition: and(succeeded(), not(canceled()), startsWith(variables['Build.SourceBranch'], '/refs/heads/main'))
     steps:
       - task: PowerShell@2
         displayName: 'Retain on Success'

@@ -88,7 +88,7 @@ stages:
       inputs:
         command: 'build'
         projects: 'TestApplication.sln'
-        arguments: "--configuration 'Release' --no-restore /p:Version=$(Version)"
+        arguments: "--configuration Release --no-restore /p:Version=$(Version)"
         workingDirectory: '$(System.DefaultWorkingDirectory)'
       displayName: 'Build solution'
 
@@ -98,7 +98,7 @@ stages:
         projects: |
           **/*[Tt]ests/*.csproj
           !**/UI/*[Tt]ests/*.csproj
-        arguments: '--configuration "Release" --no-restore --no-build --collect "XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura,opencover'
+        arguments: '--configuration Release --no-restore --no-build --collect "XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura,opencover'
         publishTestResults: true
       displayName: 'Run unit tests'
       continueOnError: true

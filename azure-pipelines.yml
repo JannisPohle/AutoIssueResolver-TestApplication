@@ -123,7 +123,7 @@ stages:
   - job: Retain_Pipeline
     pool: Default
     dependsOn: Build
-    condition: and(succeeded(), not(canceled()), startsWith(variables['Build.SourceBranch'], '/refs/heads/main'))
+    condition: and(succeeded(), not(canceled()), startsWith(variables['Build.SourceBranch'], 'refs/heads/main'))
     steps:
       - task: PowerShell@2
         displayName: 'Retain on Success'

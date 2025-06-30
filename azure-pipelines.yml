@@ -125,16 +125,22 @@ stages:
     dependsOn: Build
     condition: and(succeeded(), not(canceled()), startsWith(variables['Build.SourceBranch'], 'refs/heads/main'))
     steps:
-      - task: PowerShell@2
-        displayName: 'Retain on Success'
+      - bash: |
+          curl \
+            -X POST \
+            -H 'Authorization: Bearer $(System.AccessToken)' \
+            -H 'Content-Type: application/json' \
+            -d '[
+                  {
+                    "daysValid": 360,
+                    "definitionId": $(System.DefinitionId),
+                    "ownerId": "User:$(Build.RequestedForId)",
+                    "protectPipeline": false,
+                    "runId": $(Build.BuildId)
+                  }
+                ]' \
+            "$(System.CollectionUri)$(System.TeamProject)/_apis/build/retention/leases?api-version=6.0-preview.1"
+        condition: and(succeeded(), not(canceled()))
         name: RetainOnSuccess
-        inputs:
-          failOnStderr: true
-          targetType: 'inline'
-          script: |
-            $contentType = "application/json";
-            $headers = @{ Authorization = 'Bearer $(System.AccessToken)' };
-            $rawRequest = @{ daysValid = 365; definitionId = $(System.DefinitionId); ownerId = 'User:$(Build.RequestedForId)'; protectPipeline = $false; runId = $(Build.BuildId) };
-            $request = ConvertTo-Json @($rawRequest);
-            $uri = "$(System.CollectionUri)$(System.TeamProject)/_apis/build/retention/leases?api-version=6.0-preview.1";
-            Invoke-RestMethod -uri $uri -method POST -Headers $headers -ContentType $contentType -Body $request;
+        displayName: Retain on Success
+

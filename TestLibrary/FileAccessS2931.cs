@@ -7,7 +7,7 @@ namespace TestLibrary;
 /// </summary>
 public class FileAccessS2931
 {
-  private FileStream _fileStream; //TODO maybe use a different IDisposable, since this is exactly the type in the example
+  private FileStream? _fileStream; //TODO maybe use a different IDisposable, since this is exactly the type in the example
 
   public void OpenWeatherForecastFile()
   {

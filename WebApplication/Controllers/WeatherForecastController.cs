@@ -1,4 +1,6 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using FileAccess = TestLibrary.FileAccess;
 
 namespace WebApplication.Controllers;
 
@@ -6,37 +8,28 @@ namespace WebApplication.Controllers;
 [Route("[controller]")]
 public class WeatherForecastController: ControllerBase
 {
-  private static readonly string[] Summaries = new[]
-  {
-    "Freezing",
-    "Bracing",
-    "Chilly",
-    "Cool",
-    "Mild",
-    "Warm",
-    "Balmy",
-    "Hot",
-    "Sweltering",
-    "Scorching"
-  };
-
   private readonly ILogger<WeatherForecastController> _logger;
+  private readonly FileAccess _fileAccess;
 
-  public WeatherForecastController(ILogger<WeatherForecastController> logger)
+  public WeatherForecastController(ILogger<WeatherForecastController> logger, FileAccess fileAccess)
   {
     _logger = logger;
+    _fileAccess = fileAccess;
   }
 
   [HttpGet(Name = "GetWeatherForecast")]
   public IEnumerable<WeatherForecast> Get()
   {
-    return Enumerable.Range(1, 5)
-                     .Select(index => new WeatherForecast
-                     {
-                       Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                       TemperatureC = Random.Shared.Next(-20, 55),
-                       Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-                     })
-                     .ToArray();
+    try
+    {
+      _logger.LogTrace("Get WeatherForecast");
+      var content = _fileAccess.ReadFromFile("TestFiles/WeatherForecast.json");
+      return JsonSerializer.Deserialize<List<WeatherForecast>>(content) ?? [];
+    }
+    catch (Exception e)
+    {
+      _logger.LogError(e, "Error reading WeatherForecast data");
+      return [];
+    }
   }
 }

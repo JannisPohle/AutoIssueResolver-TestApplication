@@ -1,4 +1,4 @@
-namespace WebApplication;
+namespace TestLibrary;
 
 public class WeatherForecast
 {

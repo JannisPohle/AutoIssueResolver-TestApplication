@@ -15,7 +15,7 @@ public class WeatherAccessor
   {
     await using var fileStream = new FileStream(_filePath, FileMode.Open);
     using var reader = new StreamReader(fileStream);
-    var forecasts = await JsonSerializer.DeserializeAsync<IEnumerable<WeatherForecast>>(fileStream);
+    var forecasts = (await JsonSerializer.DeserializeAsync<IEnumerable<WeatherForecast>>(fileStream)) ?? [];
 
     if (forecasts.Count() == 0)
     {

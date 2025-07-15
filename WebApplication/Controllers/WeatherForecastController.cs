@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using TestLibrary;
+using TestLibrary.S3442;
 using FileAccess = TestLibrary.FileAccess;
 
 namespace WebApplication.Controllers;
@@ -48,6 +49,24 @@ public class WeatherForecastController: ControllerBase
       var content = _fileAccessS2931.ReadWeatherForecastFile();
       _fileAccessS2931.CloseWeatherForecastFile();
       return JsonSerializer.Deserialize<List<WeatherForecast>>(content) ?? [];
+    }
+    catch (Exception e)
+    {
+      _logger.LogError(e, "Error reading WeatherForecast data");
+      return [];
+    }
+  }
+
+  [HttpGet]
+  [Route("S3442")]
+  public IEnumerable<WeatherCelsius> GetWeatherForecastS3442()
+  {
+    try
+    {
+      _logger.LogTrace("Get WeatherForecast S2931");
+      var weather = new WeatherCelsius(Random.Shared.Next(-20, 50));
+
+      return new List<WeatherCelsius> { weather, };
     }
     catch (Exception e)
     {

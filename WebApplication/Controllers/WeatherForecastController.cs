@@ -2,7 +2,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using TestLibrary;
 using TestLibrary.S3442;
-using FileAccess = TestLibrary.FileAccess;
+using FileAccess = TestLibrary.S2930.FileAccess;
 
 namespace WebApplication.Controllers;
 
@@ -12,9 +12,9 @@ public class WeatherForecastController: ControllerBase
 {
   private readonly ILogger<WeatherForecastController> _logger;
   private readonly FileAccess _fileAccess;
-  private readonly FileAccessS2931 _fileAccessS2931;
+  private readonly TestLibrary.S2931.FileAccess _fileAccessS2931;
 
-  public WeatherForecastController(ILogger<WeatherForecastController> logger, FileAccess fileAccess, FileAccessS2931 fileAccessS2931)
+  public WeatherForecastController(ILogger<WeatherForecastController> logger, FileAccess fileAccess, TestLibrary.S2931.FileAccess fileAccessS2931)
   {
     _logger = logger;
     _fileAccess = fileAccess;

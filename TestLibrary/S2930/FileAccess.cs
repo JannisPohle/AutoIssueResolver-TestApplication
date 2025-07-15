@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace TestLibrary;
+namespace TestLibrary.S2930;
 
 /// <summary>
 /// Implements code smell S2930

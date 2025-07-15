@@ -1,11 +1,11 @@
 using System.Text;
 
-namespace TestLibrary;
+namespace TestLibrary.S2931;
 
 /// <summary>
 /// Implements code smell S2931
 /// </summary>
-public class FileAccessS2931
+public class FileAccess
 {
   private FileStream? _fileStream; //TODO maybe use a different IDisposable, since this is exactly the type in the example
 

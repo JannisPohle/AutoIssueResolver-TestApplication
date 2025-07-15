@@ -1,4 +1,6 @@
 using System.Runtime.CompilerServices;
+using TestLibrary.S2931;
+using FileAccess = TestLibrary.S2930.FileAccess;
 
 [assembly: InternalsVisibleTo("IntegrationTests")]
 
@@ -12,8 +14,8 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi()
        .AddLogging(loggingBuilder => loggingBuilder.AddConsole().AddDebug());
 
-builder.Services.AddTransient<TestLibrary.FileAccess>();
-builder.Services.AddTransient<TestLibrary.FileAccessS2931>();
+builder.Services.AddTransient<FileAccess>();
+builder.Services.AddTransient<TestLibrary.S2931.FileAccess>();
 
 var app = builder.Build();
 

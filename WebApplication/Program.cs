@@ -13,6 +13,7 @@ builder.Services.AddOpenApi()
        .AddLogging(loggingBuilder => loggingBuilder.AddConsole().AddDebug());
 
 builder.Services.AddTransient<TestLibrary.FileAccess>();
+builder.Services.AddTransient<TestLibrary.FileAccessS2931>();
 
 var app = builder.Build();
 

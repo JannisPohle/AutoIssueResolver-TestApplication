@@ -9,15 +9,17 @@ namespace IntegrationTests;
 public class WeatherForecastTests
 {
 
-  [Fact]
-  public async Task GetWeatherForecast_ReturnsSuccess()
+  [Theory]
+  [InlineData("S2930")]
+  [InlineData("S2931")]
+  public async Task GetWeatherForecast_ReturnsSuccess(string path)
   {
     // Arrange
     await using var factory = new WebApplicationFactory();
     var client = factory.CreateClient();
 
     // Act
-    var response = await client.GetAsync("/WeatherForecast");
+    var response = await client.GetAsync($"/WeatherForecast/{path}");
 
     // Assert
     response.EnsureSuccessStatusCode();

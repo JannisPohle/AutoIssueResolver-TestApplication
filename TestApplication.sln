@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "Integra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{7729BF2E-E5BA-4E49-A7A2-DB0C361D548D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{FACABADF-B4CA-489C-96D8-76954BD10276}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{7729BF2E-E5BA-4E49-A7A2-DB0C361D548D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7729BF2E-E5BA-4E49-A7A2-DB0C361D548D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7729BF2E-E5BA-4E49-A7A2-DB0C361D548D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{056A1B3A-CC8A-4102-B1B6-95FE117B87C8} = {FACABADF-B4CA-489C-96D8-76954BD10276}
+		{7729BF2E-E5BA-4E49-A7A2-DB0C361D548D} = {FACABADF-B4CA-489C-96D8-76954BD10276}
 	EndGlobalSection
 EndGlobal

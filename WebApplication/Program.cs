@@ -1,5 +1,8 @@
 using System.Runtime.CompilerServices;
 using TestLibrary.S2931;
+using TestLibrary.Template;
+using TestLibrary.Template.Abstractions;
+using TestLibrary.Template.Accessor;
 using FileAccess = TestLibrary.S2930.FileAccess;
 
 [assembly: InternalsVisibleTo("IntegrationTests")]
@@ -16,6 +19,11 @@ builder.Services.AddOpenApi()
 
 builder.Services.AddTransient<FileAccess>();
 builder.Services.AddTransient<TestLibrary.S2931.FileAccess>();
+builder.Services.AddTransient<IWeatherOrchestrator, WeatherOrchestrator>()
+       .AddTransient<WeatherMockAccessor>()
+       .AddTransient<WeatherDbAccessor>()
+       .AddTransient<WeatherApiAccessor>()
+       .AddTransient<WeatherFileAccessor>();
 
 var app = builder.Build();
 

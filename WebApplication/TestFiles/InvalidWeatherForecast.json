@@ -1,0 +1,25 @@
+[
+  {
+    "date": "2023-10-01T00:00:00Z",
+    "temperature": 20,
+    "summary": "Warm"
+  },
+  {
+    "date": "2023-10-02T00:00:00Z",
+    "temperature": 15,
+    "summary": "Cool"
+  },
+  {
+    "date": "2023-10-03T00:00:00Z",
+    "temperature": 10,
+    "summary": "Chilly"
+  },
+  {
+    "date": "2023-10-04T00:00:00Z",
+    "temperature": 5,
+    "summary": "Cold"
+  },
+  {
+    "date": "2023-10-05T00:00:00Z",
+    "temp
+]

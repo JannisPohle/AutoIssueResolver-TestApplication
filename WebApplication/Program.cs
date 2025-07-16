@@ -17,8 +17,6 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi()
        .AddLogging(loggingBuilder => loggingBuilder.AddConsole().AddDebug());
 
-builder.Services.AddTransient<FileAccess>();
-builder.Services.AddTransient<TestLibrary.S2931.FileAccess>();
 builder.Services.AddTransient<IWeatherOrchestrator, WeatherOrchestrator>()
        .AddTransient<WeatherMockAccessor>()
        .AddTransient<WeatherDbAccessor>()

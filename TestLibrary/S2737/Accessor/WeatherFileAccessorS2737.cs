@@ -39,7 +39,7 @@ public class WeatherFileAccessor: WeatherAccessorBase
 
       return Encoding.UTF8.GetString(content);
     }
-    catch (Exception e)
+    catch (Exception)
     {
       throw;
     }

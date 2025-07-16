@@ -55,4 +55,16 @@ public partial class WeatherOrchestratorTests
     result.IsSuccess.Should().BeFalse();
     result.Exception.Should().NotBeNull();
   }
+
+  [Fact]
+  public async Task WeatherOrchestrator_File_WithArgument_FileNotFound_ShouldFail()
+  {
+    // Act
+    var result = await _weatherOrchestrator.GetWeather(AccessMode.File, $"TestFiles/{Guid.NewGuid()}.json");
+
+    // Assert
+    result.Should().NotBeNull();
+    result.IsSuccess.Should().BeFalse();
+    result.Exception.Should().NotBeNull();
+  }
 }

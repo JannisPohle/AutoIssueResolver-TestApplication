@@ -36,8 +36,8 @@ public partial class WeatherOrchestratorTests
 
     // Assert
     result.Should().NotBeNull();
-    result.IsSuccess.Should().BeFalse();
-    result.Exception.Should().BeAssignableTo<ArgumentException>().Which.ParamName.Should().Be("mode");
+    result.IsSuccess.Should().BeTrue();
+    result.Payload.Should().NotBeNull().And.BeEmpty();
   }
 
   [Fact]

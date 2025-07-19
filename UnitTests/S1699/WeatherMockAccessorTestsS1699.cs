@@ -1,8 +1,8 @@
 using FluentAssertions;
-using TestLibrary.Template.Models;
+using TestLibrary.S1699.Models;
 using Xunit;
 
-namespace UnitTests.Template;
+namespace UnitTests.S1699;
 
 public partial class WeatherOrchestratorTests
 {

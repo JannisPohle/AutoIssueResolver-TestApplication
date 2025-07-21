@@ -1,0 +1,67 @@
+using FluentAssertions;
+using Microsoft.Extensions.Logging.Abstractions;
+using TestLibrary.S2223;
+using TestLibrary.S2223.Accessor;
+using TestLibrary.S2223.Models;
+using Xunit;
+
+namespace UnitTests.S2223;
+
+public partial class WeatherOrchestratorTests
+{
+  private readonly WeatherOrchestrator _weatherOrchestrator;
+
+  public WeatherOrchestratorTests()
+  {
+    _weatherOrchestrator = new WeatherOrchestrator(new WeatherFileAccessor(NullLogger<WeatherFileAccessor>.Instance), new WeatherDbAccessor(NullLogger<WeatherDbAccessor>.Instance), new WeatherApiAccessor(NullLogger<WeatherApiAccessor>.Instance), new WeatherMockAccessor(NullLogger<WeatherMockAccessor>.Instance), NullLogger<WeatherOrchestrator>.Instance);
+  }
+
+  [Fact]
+  public async Task WeatherOrchestrator_AccessModeNone_ShouldFail()
+  {
+    // Act
+    var result = await _weatherOrchestrator.GetWeather(AccessMode.None);
+
+    // Assert
+    result.Should().NotBeNull();
+    result.IsSuccess.Should().BeFalse();
+    result.Exception.Should().BeAssignableTo<ArgumentException>().Which.ParamName.Should().Be("mode");
+  }
+
+  [Fact]
+  public async Task WeatherOrchestrator_InvalidAccessMode_ShouldFail()
+  {
+    // Act
+    var result = await _weatherOrchestrator.GetWeather((AccessMode) (-12));
+
+    // Assert
+    result.Should().NotBeNull();
+    result.IsSuccess.Should().BeFalse();
+    result.Exception.Should().BeAssignableTo<ArgumentException>().Which.ParamName.Should().Be("mode");
+  }
+
+  [Fact]
+  public async Task WeatherOrchestrator_AdjustUnit_ShouldUseNewUnit()
+  {
+    try
+    {
+      // Act
+      await _weatherOrchestrator.ChangeUnit("Fahrenheit");
+
+      // Assert
+      var result = await _weatherOrchestrator.GetWeather(AccessMode.File);
+      result.Should().NotBeNull();
+      result.IsSuccess.Should().BeTrue();
+      result.Payload.Should().NotBeNullOrEmpty().And.HaveCount(5);
+      result.Payload.Should().OnlyContain(x => x.Temperature >= -5 && x.Temperature <= 20 && x.Temperature != 0);
+      result.Payload.Should().AllSatisfy(weather => weather.Unit.Should().Be("Fahrenheit"));
+    }
+    finally
+    {
+      // Reset to Celsius for other tests
+      await _weatherOrchestrator.ChangeUnit("Celsius");
+    }
+
+
+  }
+}

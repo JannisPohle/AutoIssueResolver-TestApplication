@@ -20,7 +20,7 @@ public partial class WeatherOrchestratorTests
     result.Should().NotBeNull();
     result.IsSuccess.Should().BeTrue();
     result.Payload.Should().NotBeNullOrEmpty().And.HaveCount(1); // number of entries should default to the number of calls to the accessor (global, across test cases)
-    result.Payload.First().Should().Satisfy<WeatherModelCelsius>(x => x.Temperature.Should().Be(-4));
+    result.Payload.First().Should().Match<WeatherModelCelsius>(x => x.Temperature == -4);
     result.Payload.Should().AllSatisfy(weather => weather.Unit.Should().Be("Celsius"));
 
     var secondResult = await _weatherOrchestrator.GetWeather(AccessMode.Mock);

@@ -28,10 +28,16 @@ public class WeatherMockAccessor: WeatherAccessorBase
   {
     var random = string.IsNullOrWhiteSpace(argument) ? new Random(_callCount) : new Random(argument?.GetHashCode() ?? 0);
 
-    if (!int.TryParse(argument, out var count))
+    int count;
+    if (string.IsNullOrWhiteSpace(argument))
     {
-      count = _callCount; // Default count if parsing fails
+      count = _callCount; // Default to the number of calls to the accessor if no argument is provided
     }
+    else if (!int.TryParse(argument, out count))
+    {
+      count = 10; // If an argument is provided, try to parse it as an integer. If not possible, fallback to 10
+    }
+
 
     for (var i = 0; i < count; i++)
     {

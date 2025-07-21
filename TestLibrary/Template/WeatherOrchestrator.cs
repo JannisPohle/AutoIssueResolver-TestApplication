@@ -39,7 +39,7 @@ public class WeatherOrchestrator: IWeatherOrchestrator
       {
         AccessMode.File => await _fileAccessor.GetWeather(argument),
         AccessMode.Mock => await _mockAccessor.GetWeather(argument),
-        AccessMode.Database => await _dbAccessor.GetWeather(argument),
+        AccessMode.Database => await GetWeatherDataFromDbAccessor(argument),
         AccessMode.Web => await _apiAccessor.GetWeather(argument),
         _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, null)
       };
@@ -54,5 +54,11 @@ public class WeatherOrchestrator: IWeatherOrchestrator
 
       return Result<List<WeatherModelCelsius>>.Failure(e);
     }
+  }
+
+  private async Task<List<WeatherModelCelsius>> GetWeatherDataFromDbAccessor(string? argument)
+  {
+    await _dbAccessor.OpenConnection(argument);
+    return await _dbAccessor.GetWeather(argument);
   }
 }

@@ -33,7 +33,8 @@ public partial class WeatherOrchestratorTests
     (await action.Should().ThrowAsync<InvalidOperationException>()).And.Message.Should().Contain("Database connection is not open.");
   }
 
-  [Fact]
+  [Fact] //Expected to fail, without fixing the sonarqube finding
+  [Trait("ShouldFail", "true")]
   public async Task WeatherOrchestrator_DbAccessor_WithArgument_InvalidConnectionString_ShouldFail()
   {
     // Act

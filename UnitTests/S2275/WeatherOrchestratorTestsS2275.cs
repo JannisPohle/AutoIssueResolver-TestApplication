@@ -28,7 +28,8 @@ public partial class WeatherOrchestratorTests
     result.Exception.Should().BeAssignableTo<ArgumentException>().Which.ParamName.Should().Be("mode");
   }
 
-  [Fact]
+  [Fact] // Expect to fail, without fixing the sonarqube finding
+  [Trait("ShouldFail", "true")]
   public async Task WeatherOrchestrator_InvalidAccessMode_ShouldFail()
   {
     // Act

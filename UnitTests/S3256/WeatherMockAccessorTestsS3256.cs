@@ -6,7 +6,8 @@ namespace UnitTests.S3256;
 
 public partial class WeatherOrchestratorTests
 {
-  [Fact]
+  [Fact] //Expect to fail, without fixing the sonarqube finding
+  [Trait("ShouldFail", "true")]
   public async Task WeatherOrchestrator_Mock_NoArgument_ShouldReturnRandomData()
   {
     // Act

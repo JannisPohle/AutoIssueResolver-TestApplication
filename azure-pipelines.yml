@@ -80,8 +80,6 @@ stages:
       inputs:
         command: 'restore'
         projects: 'TestApplication.sln'
-        feedsToUse: 'select'
-        vstsFeed: 'e13e9443-b520-40d4-813c-324c959de0fb'
       displayName: 'Restore nuget packages'
 
     - task: DotNetCoreCLI@2

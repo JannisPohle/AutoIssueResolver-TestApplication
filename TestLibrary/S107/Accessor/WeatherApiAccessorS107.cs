@@ -71,7 +71,7 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
 
       await foreach (var weatherModel in response)
       {
-        weatherData.Add(new WeatherModelCelsius((int) weatherModel.Temperature));
+        weatherData.Add(new WeatherModelCelsius((int) (weatherModel?.Temperature ?? 0)));
       }
 
       Logger.LogInformation("Found {WeatherDataCount} weather data for arguments: {Query}.", weatherData.Count, queryUrl);
@@ -80,7 +80,7 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
     }
     catch (Exception e)
     {
-      Logger.LogWarning(e, "Failed to get weather data with arguments:  {location}, {startTime}, {endTime}, {longitude}, {latitude}, {unit}", location, startTime, endTime, longitude, latitude, unit);
+      Logger.LogWarning(e, "Failed to get weather data with arguments:  {Location}, {StartTime}, {EndTime}, {Longitude}, {Latitude}, {Unit}", location, startTime, endTime, longitude, latitude, unit);
 
       throw new ConnectionFailedException($"Failed to connect to the weather API with arguments: {location}, {startTime}, {endTime}, {longitude}, {latitude}, {unit}.", e);
     }

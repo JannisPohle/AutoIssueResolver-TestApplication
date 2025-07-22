@@ -11,7 +11,7 @@ using Xunit;
 
 namespace UnitTests.S2372;
 
-public partial class WeatherOrchestratorTests
+public sealed partial class WeatherOrchestratorTests
 {
   [Fact]
   public async Task WeatherOrchestrator_ApiAccessor_GetDefaultValues()

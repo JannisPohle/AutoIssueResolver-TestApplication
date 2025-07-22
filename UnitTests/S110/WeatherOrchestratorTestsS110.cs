@@ -10,7 +10,7 @@ using Xunit;
 
 namespace UnitTests.S110;
 
-public partial class WeatherOrchestratorTests: IDisposable
+public sealed partial class WeatherOrchestratorTests: IDisposable
 {
   private readonly WeatherOrchestrator _weatherOrchestrator;
   private WireMockServer? _wireMockServer;

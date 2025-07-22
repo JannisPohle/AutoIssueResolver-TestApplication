@@ -3,13 +3,15 @@ using Microsoft.Extensions.Logging.Abstractions;
 using TestLibrary.Template;
 using TestLibrary.Template.Accessor;
 using TestLibrary.Template.Models;
+using WireMock.Server;
 using Xunit;
 
 namespace UnitTests.Template;
 
-public partial class WeatherOrchestratorTests
+public partial class WeatherOrchestratorTests: IDisposable
 {
   private readonly WeatherOrchestrator _weatherOrchestrator;
+  private WireMockServer? _wireMockServer;
 
   public WeatherOrchestratorTests()
   {
@@ -38,5 +40,10 @@ public partial class WeatherOrchestratorTests
     result.Should().NotBeNull();
     result.IsSuccess.Should().BeFalse();
     result.Exception.Should().BeAssignableTo<ArgumentException>().Which.ParamName.Should().Be("mode");
+  }
+
+  public void Dispose()
+  {
+    _wireMockServer?.Dispose();
   }
 }

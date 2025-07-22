@@ -64,7 +64,7 @@ public class WeatherOrchestrator: IWeatherOrchestrator
     return await _dbAccessor.GetWeather(argument);
   }
 
-  private void ValidateWeatherModels(List<WeatherModelCelsius> weather)
+  private static void ValidateWeatherModels(List<WeatherModelCelsius> weather)
   {
     foreach (var weatherEntry in weather)
     {

@@ -44,6 +44,7 @@ public partial class WeatherOrchestratorTests: IDisposable
 
   public void Dispose()
   {
+    _wireMockServer?.Stop();
     _wireMockServer?.Dispose();
   }
 }

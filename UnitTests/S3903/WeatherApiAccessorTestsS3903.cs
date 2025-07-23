@@ -1,7 +1,6 @@
 using FluentAssertions;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces;
-using TestLibrary.S2365.Models;
-using TestLibrary.S2365.Models.External;
+using TestLibrary.S3903.Models;
 using WireMock.FluentAssertions;
 using WireMock.Matchers;
 using WireMock.RequestBuilders;
@@ -9,7 +8,7 @@ using WireMock.ResponseBuilders;
 using WireMock.Server;
 using Xunit;
 
-namespace UnitTests.S2365;
+namespace UnitTests.S3903;
 
 public partial class WeatherOrchestratorTests
 {
@@ -88,42 +87,22 @@ public partial class WeatherOrchestratorTests
   {
     _wireMockServer = WireMockServer.Start(31246);
     _wireMockServer?.Given(Request.Create().WithPath("/v1/api/weather").WithParam("location", MatchBehaviour.RejectOnMatch).UsingGet())
-                   .RespondWith(Response.Create().WithStatusCode(200).WithBodyAsJson(new WeatherApiModelResult([
-                     new ()
-                     {
-                       Location = "Munich",
-                       Temperature = 20,
-                       Condition = "Sunny"
-                     },
-                     new()
-                     {
-                       Location = "Hamburg",
-                       Temperature = 17.2,
-                       Condition = "Cloudy"
-                     },
-                     new ()
-                     {
-                       Location = "Berlin",
-                       Temperature = 11.9,
-                       Condition = "Rainy"
-                     },
-                   ])));
+                   .RespondWith(Response.Create().WithStatusCode(200).WithBody(@"[
+                     { ""Location"": ""Munich"", ""Temperature"": 20, ""Condition"": ""Sunny"" },
+                     { ""Location"": ""Hamburg"", ""Temperature"": 17.2, ""Condition"": ""Cloudy"" },
+                     { ""Location"": ""Berlin"", ""Temperature"": 11.9, ""Condition"": ""Rainy"" }
+                   ]"));
 
     _wireMockServer?.Given(Request.Create().WithPath("/v1/api/weather").WithParam("location").UsingGet())
                    .RespondWith(Response.Create().WithStatusCode(404));
 
     _wireMockServer?.Given(Request.Create().WithPath("/v1/api/weather").WithParam("location", MatchBehaviour.AcceptOnMatch, "Stuttgart").UsingGet())
-                   .RespondWith(Response.Create().WithStatusCode(200).WithBodyAsJson(new WeatherApiModelResult([])));
+                   .RespondWith(Response.Create().WithStatusCode(200).WithBody("[]"));
 
     _wireMockServer?.Given(Request.Create().WithPath("/v1/api/weather").WithParam("location", MatchBehaviour.AcceptOnMatch, "Berlin").UsingGet())
-                   .RespondWith(Response.Create().WithStatusCode(200).WithBodyAsJson(new WeatherApiModelResult([
-                     new()
-                     {
-                       Location = "Berlin",
-                       Temperature = 11.9,
-                       Condition = "Rainy"
-                     },
-                   ])));
+                   .RespondWith(Response.Create().WithStatusCode(200).WithBody(@"[
+                     { ""Location"": ""Berlin"", ""Temperature"": 11.9, ""Condition"": ""Rainy"" }
+                   ]"));
 
   }
 }

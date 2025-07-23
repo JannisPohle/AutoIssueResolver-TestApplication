@@ -42,9 +42,13 @@ do
   # Adjust namespace and using lines for .cs files
   if [[ "$extension" == "cs" ]]; then
     awk -v sfx="$SUFFIX" '
-      /^namespace / { sub(/Template/, sfx); print; next }
-      /^using / { sub(/Template/, sfx); print; next }
-      { print }
+      {
+        gsub(/\.Template\./, "." sfx ".");
+        if ($0 ~ /^namespace / || $0 ~ /^using /) {
+          sub(/Template/, sfx);
+        }
+        print
+      }
     ' "$file" > "$target_path"
   else
     cp "$file" "$target_path"

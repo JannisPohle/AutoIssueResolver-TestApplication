@@ -1,5 +1,8 @@
+using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
+
+[assembly: CollectionBehavior(CollectionBehavior.CollectionPerAssembly)] //Disable parallel test execution to prevent issues with the WireMock server
 
 namespace UnitTests;
 

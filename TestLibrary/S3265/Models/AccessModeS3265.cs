@@ -1,6 +1,6 @@
 namespace TestLibrary.S3265.Models;
 
-public enum AccessMode
+public enum AccessModes
 {
   None = 1,
   File = 2,

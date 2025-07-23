@@ -4,5 +4,5 @@ namespace TestLibrary.S3265.Abstractions;
 
 public interface IWeatherOrchestrator
 {
-  Task<Result<List<WeatherModelCelsius>>> GetWeather(AccessMode mode, string? argument = null);
+  Task<Result<List<WeatherModelCelsius>>> GetWeather(AccessModes mode, string? argument = null);
 }

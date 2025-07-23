@@ -10,7 +10,7 @@ public partial class WeatherOrchestratorTests
   public async Task WeatherOrchestrator_ApiAccessor_Dummy()
   {
     // Act
-    var result = await _weatherOrchestrator.GetWeather(AccessMode.Web);
+    var result = await _weatherOrchestrator.GetWeather(AccessModes.Web);
 
     // Assert
     result.Should().NotBeNull();

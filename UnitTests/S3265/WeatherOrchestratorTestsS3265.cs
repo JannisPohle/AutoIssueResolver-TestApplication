@@ -20,7 +20,7 @@ public partial class WeatherOrchestratorTests
   public async Task WeatherOrchestrator_AccessModeNone_ShouldFail()
   {
     // Act
-    var result = await _weatherOrchestrator.GetWeather(AccessMode.None);
+    var result = await _weatherOrchestrator.GetWeather(AccessModes.None);
 
     // Assert
     result.Should().NotBeNull();
@@ -32,7 +32,7 @@ public partial class WeatherOrchestratorTests
   public async Task WeatherOrchestrator_InvalidAccessMode_ShouldReturnEmptyList()
   {
     // Act
-    var result = await _weatherOrchestrator.GetWeather((AccessMode) (32));
+    var result = await _weatherOrchestrator.GetWeather((AccessModes) (32));
 
     // Assert
     result.Should().NotBeNull();
@@ -44,7 +44,7 @@ public partial class WeatherOrchestratorTests
   public async Task WeatherOrchestrator_CombinedAccessMode_ShouldReturnCombinedList()
   {
     // Act
-    var result = await _weatherOrchestrator.GetWeather(AccessMode.File | AccessMode.Mock);
+    var result = await _weatherOrchestrator.GetWeather(AccessModes.File | AccessModes.Mock);
 
     // Assert
     result.Should().NotBeNull();
@@ -58,7 +58,7 @@ public partial class WeatherOrchestratorTests
   public async Task WeatherOrchestrator_CombinedAccessMode_ShouldReturnCombinedList_EvenIfOneSourceFails()
   {
     // Act
-    var result = await _weatherOrchestrator.GetWeather(AccessMode.File | AccessMode.Mock, "InvalidFile.json");
+    var result = await _weatherOrchestrator.GetWeather(AccessModes.File | AccessModes.Mock, "InvalidFile.json");
 
     // Assert
     result.Should().NotBeNull();

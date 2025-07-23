@@ -10,7 +10,7 @@ public partial class WeatherOrchestratorTests
   public async Task WeatherOrchestrator_File_NoArgument_ShouldUseFallbackFile()
   {
     // Act
-    var result = await _weatherOrchestrator.GetWeather(AccessMode.File);
+    var result = await _weatherOrchestrator.GetWeather(AccessModes.File);
 
     // Assert
     result.Should().NotBeNull();
@@ -23,7 +23,7 @@ public partial class WeatherOrchestratorTests
   public async Task WeatherOrchestrator_File_WithArgument_ShouldUseSpecifiedFile()
   {
     // Act
-    var result = await _weatherOrchestrator.GetWeather(AccessMode.File, "TestFiles/WeatherForecast_10Entries.json");
+    var result = await _weatherOrchestrator.GetWeather(AccessModes.File, "TestFiles/WeatherForecast_10Entries.json");
 
     // Assert
     result.Should().NotBeNull();
@@ -36,7 +36,7 @@ public partial class WeatherOrchestratorTests
   public async Task WeatherOrchestrator_File_WithArgument_NoDataFound_ShouldReturnNoData()
   {
     // Act
-    var result = await _weatherOrchestrator.GetWeather(AccessMode.File, "TestFiles/EmptyWeatherForecast.json");
+    var result = await _weatherOrchestrator.GetWeather(AccessModes.File, "TestFiles/EmptyWeatherForecast.json");
 
     // Assert
     result.Should().NotBeNull();
@@ -48,7 +48,7 @@ public partial class WeatherOrchestratorTests
   public async Task WeatherOrchestrator_File_WithArgument_InvalidData_ShouldFail()
   {
     // Act
-    var result = await _weatherOrchestrator.GetWeather(AccessMode.File, "TestFiles/InvalidWeatherForecast.json");
+    var result = await _weatherOrchestrator.GetWeather(AccessModes.File, "TestFiles/InvalidWeatherForecast.json");
 
     // Assert
     result.Should().NotBeNull();
@@ -60,7 +60,7 @@ public partial class WeatherOrchestratorTests
   public async Task WeatherOrchestrator_File_WithArgument_FileNotFound_ShouldFail()
   {
     // Act
-    var result = await _weatherOrchestrator.GetWeather(AccessMode.File, $"TestFiles/{Guid.NewGuid()}.json");
+    var result = await _weatherOrchestrator.GetWeather(AccessModes.File, $"TestFiles/{Guid.NewGuid()}.json");
 
     // Assert
     result.Should().NotBeNull();

@@ -10,7 +10,7 @@ public partial class WeatherOrchestratorTests
   public async Task WeatherOrchestrator_DbAccessor_Dummy()
   {
     // Act
-    var result = await _weatherOrchestrator.GetWeather(AccessMode.Database);
+    var result = await _weatherOrchestrator.GetWeather(AccessModes.Database);
 
     // Assert
     result.Should().NotBeNull();

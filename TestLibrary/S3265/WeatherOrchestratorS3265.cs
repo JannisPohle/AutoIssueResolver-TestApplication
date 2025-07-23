@@ -23,11 +23,11 @@ public class WeatherOrchestrator: IWeatherOrchestrator
   }
 
 
-  public async Task<Result<List<WeatherModelCelsius>>> GetWeather(AccessMode mode, string? argument = null)
+  public async Task<Result<List<WeatherModelCelsius>>> GetWeather(AccessModes mode, string? argument = null)
   {
     try
     {
-      if ((AccessMode.None & mode) > 0)
+      if ((AccessModes.None & mode) > 0)
       {
         return Result<List<WeatherModelCelsius>>.Failure(new ArgumentException("Access mode must be specified", nameof(mode)));
       }
@@ -35,49 +35,49 @@ public class WeatherOrchestrator: IWeatherOrchestrator
       _logger.LogInformation("Getting weather from {AccessMode} with Argument: {Argument}", mode, argument);
 
       var result = new List<WeatherModelCelsius>();
-      if (mode.HasFlag(AccessMode.File))
+      if (mode.HasFlag(AccessModes.File))
       {
         try
         {
           result.AddRange(await _fileAccessor.GetWeather(argument));
         }
-        catch (Exception e) when (mode != AccessMode.File) // if other data sources are available, we want to log the error but not fail
+        catch (Exception e) when (mode != AccessModes.File) // if other data sources are available, we want to log the error but not fail
         {
           _logger.LogWarning(e, "Failed to retrieve weather data from file. Continuing with other sources.");
         }
       }
 
-      if (mode.HasFlag(AccessMode.Mock))
+      if (mode.HasFlag(AccessModes.Mock))
       {
         try
         {
           result.AddRange(await _mockAccessor.GetWeather(argument));
         }
-        catch (Exception e) when (mode != AccessMode.Mock) // if other data sources are available, we want to log the error but not fail
+        catch (Exception e) when (mode != AccessModes.Mock) // if other data sources are available, we want to log the error but not fail
         {
           _logger.LogWarning(e, "Failed to retrieve weather data from mock accessor. Continuing with other sources.");
         }
       }
 
-      if (mode.HasFlag(AccessMode.Database))
+      if (mode.HasFlag(AccessModes.Database))
       {
         try
         {
           result.AddRange(await _dbAccessor.GetWeather(argument));
         }
-        catch (Exception e) when (mode != AccessMode.Database)  // if other data sources are available, we want to log the error but not fail
+        catch (Exception e) when (mode != AccessModes.Database)  // if other data sources are available, we want to log the error but not fail
         {
           _logger.LogWarning(e, "Failed to retrieve weather data from database. Continuing with other sources.");
         }
       }
 
-      if (mode.HasFlag(AccessMode.Web))
+      if (mode.HasFlag(AccessModes.Web))
       {
         try
         {
           result.AddRange(await _apiAccessor.GetWeather(argument));
         }
-        catch (Exception e) when (mode != AccessMode.Web) // if other data sources are available, we want to log the error but not fail
+        catch (Exception e) when (mode != AccessModes.Web) // if other data sources are available, we want to log the error but not fail
         {
           _logger.LogWarning(e, "Failed to retrieve weather data from web API. Continuing with other sources.");
         }

@@ -10,49 +10,49 @@ public partial class WeatherOrchestratorTests
   public async Task WeatherOrchestrator_Mock_NoArgument_ShouldReturnRandomData()
   {
     // Act
-    var result = await _weatherOrchestrator.GetWeather(AccessMode.Mock);
+    var result = await _weatherOrchestrator.GetWeather(AccessModes.Mock);
 
     // Assert
     result.Should().NotBeNull();
     result.IsSuccess.Should().BeTrue();
     result.Payload.Should().NotBeNullOrEmpty().And.HaveCount(10);
     result.Payload.Should().OnlyContain(x => x.Temperature >= -20 && x.Temperature <= 50);
-    result.Payload.Should().NotBeEquivalentTo((await _weatherOrchestrator.GetWeather(AccessMode.Mock)).Payload);
+    result.Payload.Should().NotBeEquivalentTo((await _weatherOrchestrator.GetWeather(AccessModes.Mock)).Payload);
   }
 
   [Fact]
   public async Task WeatherOrchestrator_Mock_WithArgument_ShouldReturnSameData()
   {
     // Act
-    var result = await _weatherOrchestrator.GetWeather(AccessMode.Mock, "asdf");
+    var result = await _weatherOrchestrator.GetWeather(AccessModes.Mock, "asdf");
 
     // Assert
     result.Should().NotBeNull();
     result.IsSuccess.Should().BeTrue();
     result.Payload.Should().NotBeNullOrEmpty().And.HaveCount(10);
     result.Payload.Should().OnlyContain(x => x.Temperature >= -20 && x.Temperature <= 50);
-    result.Payload.Should().BeEquivalentTo((await _weatherOrchestrator.GetWeather(AccessMode.Mock, "asdf")).Payload);
+    result.Payload.Should().BeEquivalentTo((await _weatherOrchestrator.GetWeather(AccessModes.Mock, "asdf")).Payload);
   }
 
   [Fact]
   public async Task WeatherOrchestrator_Mock_WithArgument_ShouldReturnSpecifiedNumberOfEntries()
   {
     // Act
-    var result = await _weatherOrchestrator.GetWeather(AccessMode.Mock, "5");
+    var result = await _weatherOrchestrator.GetWeather(AccessModes.Mock, "5");
 
     // Assert
     result.Should().NotBeNull();
     result.IsSuccess.Should().BeTrue();
     result.Payload.Should().NotBeNullOrEmpty().And.HaveCount(5);
     result.Payload.Should().OnlyContain(x => x.Temperature >= -20 && x.Temperature <= 50);
-    result.Payload.Should().BeEquivalentTo((await _weatherOrchestrator.GetWeather(AccessMode.Mock, "5")).Payload);
+    result.Payload.Should().BeEquivalentTo((await _weatherOrchestrator.GetWeather(AccessModes.Mock, "5")).Payload);
   }
 
   [Fact]
   public async Task WeatherOrchestrator_Mock_WithArgument_NoDataFound_ShouldThrowException()
   {
     // Act
-    var result = await _weatherOrchestrator.GetWeather(AccessMode.Mock, "0");
+    var result = await _weatherOrchestrator.GetWeather(AccessModes.Mock, "0");
 
     // Assert
     result.Should().NotBeNull();

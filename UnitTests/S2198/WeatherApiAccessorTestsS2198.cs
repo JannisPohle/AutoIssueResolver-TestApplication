@@ -90,9 +90,9 @@ public partial class WeatherOrchestratorTests
     // Arrange
     SetupWireMockServer();
     _wireMockServer!.Given(Request.Create().WithPath("/v1/api/weather").WithParam("location", MatchBehaviour.AcceptOnMatch, "Bergen").UsingGet())
-                    .RespondWith(Response.Create().WithStatusCode(200).WithBodyAsJson(new List<WeatherApiModel>
+                    .RespondWith(Response.Create().WithStatusCode(200).WithBodyAsJson(new List<TestLibrary.S2198.Models.External.WeatherApiModel>
                     {
-                      new() { Location = "Bergen", Temperature = -50.3, Condition = "Rainy" },
+                      new() { Location = "Bergen", Temperature = -50.3f, Condition = "Rainy" },
                     }));
 
     // Act
@@ -112,7 +112,7 @@ public partial class WeatherOrchestratorTests
     // Arrange
     SetupWireMockServer();
     _wireMockServer!.Given(Request.Create().WithPath("/v1/api/weather").WithParam("location", MatchBehaviour.AcceptOnMatch, "Madrid").UsingGet())
-                    .RespondWith(Response.Create().WithStatusCode(200).WithBodyAsJson(new List<WeatherApiModel>
+                    .RespondWith(Response.Create().WithStatusCode(200).WithBodyAsJson(new List<TestLibrary.S2198.Models.External.WeatherApiModel>
                     {
                       new() { Location = "Madrid", Temperature = int.MaxValue, Condition = "Rainy" },
                     }));
@@ -133,23 +133,23 @@ public partial class WeatherOrchestratorTests
   {
     _wireMockServer = WireMockServer.Start(31246);
     _wireMockServer?.Given(Request.Create().WithPath("/v1/api/weather").WithParam("location", MatchBehaviour.RejectOnMatch).UsingGet())
-                   .RespondWith(Response.Create().WithStatusCode(200).WithBodyAsJson(new List<WeatherApiModel>
+                   .RespondWith(Response.Create().WithStatusCode(200).WithBodyAsJson(new List<TestLibrary.S2198.Models.External.WeatherApiModel>
                    {
                      new() { Location = "Munich", Temperature = 20, Condition = "Sunny" },
-                     new() { Location = "Hamburg", Temperature = 17.2, Condition = "Cloudy" },
-                     new() { Location = "Berlin", Temperature = 11.9, Condition = "Rainy" },
+                     new() { Location = "Hamburg", Temperature = 17.2f, Condition = "Cloudy" },
+                     new() { Location = "Berlin", Temperature = 11.9f, Condition = "Rainy" },
                    }));
 
     _wireMockServer?.Given(Request.Create().WithPath("/v1/api/weather").WithParam("location").UsingGet())
                    .RespondWith(Response.Create().WithStatusCode(404));
 
     _wireMockServer?.Given(Request.Create().WithPath("/v1/api/weather").WithParam("location", MatchBehaviour.AcceptOnMatch, "Stuttgart").UsingGet())
-                   .RespondWith(Response.Create().WithStatusCode(200).WithBodyAsJson(new List<WeatherApiModel>()));
+                   .RespondWith(Response.Create().WithStatusCode(200).WithBodyAsJson(new List<TestLibrary.S2198.Models.External.WeatherApiModel>()));
 
     _wireMockServer?.Given(Request.Create().WithPath("/v1/api/weather").WithParam("location", MatchBehaviour.AcceptOnMatch, "Berlin").UsingGet())
-                   .RespondWith(Response.Create().WithStatusCode(200).WithBodyAsJson(new List<WeatherApiModel>
+                   .RespondWith(Response.Create().WithStatusCode(200).WithBodyAsJson(new List<TestLibrary.S2198.Models.External.WeatherApiModel>
                    {
-                     new() { Location = "Berlin", Temperature = 11.9, Condition = "Rainy" },
+                     new() { Location = "Berlin", Temperature = 11.9f, Condition = "Rainy" },
                    }));
   }
 }

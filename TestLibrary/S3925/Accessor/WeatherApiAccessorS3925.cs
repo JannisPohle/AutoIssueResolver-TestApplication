@@ -26,7 +26,7 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
         url += $"?location={argument}";
       }
 
-      var response = _httpClient.GetFromJsonAsAsyncEnumerable<WeatherApiModel>(url);
+      var response = _httpClient.GetFromJsonAsAsyncEnumerable<Models.External.WeatherApiModel>(url);
 
       if (response is null)
       {

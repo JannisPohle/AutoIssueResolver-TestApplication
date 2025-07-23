@@ -1,7 +1,6 @@
 using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
 using TestLibrary.S107.Models;
-using TestLibrary.S107.Models.External;
 
 namespace TestLibrary.S107.Accessor;
 
@@ -58,7 +57,7 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
         queryUrl = "?" + string.Join("&", queryParams.Select(kvp => $"{kvp.Key}={kvp.Value}"));
       }
 
-      var response = _httpClient.GetFromJsonAsAsyncEnumerable<WeatherApiModel>(url + queryUrl);
+      var response = _httpClient.GetFromJsonAsAsyncEnumerable<Models.External.WeatherApiModel>(url + queryUrl);
 
       if (response is null)
       {

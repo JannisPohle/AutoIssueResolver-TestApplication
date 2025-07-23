@@ -21,7 +21,7 @@ public partial class WeatherOrchestratorTests
     _wireMockServer?.Given(Request.Create().WithPath("/v1/api/weather").WithParam("location", MatchBehaviour.RejectOnMatch).UsingGet())
                    .RespondWith(Response.Create()
                                         .WithStatusCode(200)
-                                        .WithBodyAsJson(new List<WeatherApiModel>
+                                        .WithBodyAsJson(new List<TestLibrary.S107.Models.External.WeatherApiModel>
                                         {
                                           new()
                                           {
@@ -47,12 +47,12 @@ public partial class WeatherOrchestratorTests
                    .RespondWith(Response.Create().WithStatusCode(404));
 
     _wireMockServer?.Given(Request.Create().WithPath("/v1/api/weather").WithParam("location", MatchBehaviour.AcceptOnMatch, "Stuttgart").UsingGet())
-                   .RespondWith(Response.Create().WithStatusCode(200).WithBodyAsJson(new List<WeatherApiModel>()));
+                   .RespondWith(Response.Create().WithStatusCode(200).WithBodyAsJson(new List<TestLibrary.S107.Models.External.WeatherApiModel>()));
 
     _wireMockServer?.Given(Request.Create().WithPath("/v1/api/weather").WithParam("location", MatchBehaviour.AcceptOnMatch, "Berlin").UsingGet())
                    .RespondWith(Response.Create()
                                         .WithStatusCode(200)
-                                        .WithBodyAsJson(new List<WeatherApiModel>
+                                        .WithBodyAsJson(new List<TestLibrary.S107.Models.External.WeatherApiModel>
                                         {
                                           new()
                                           {
@@ -80,7 +80,7 @@ public partial class WeatherOrchestratorTests
                                   .UsingGet())
                     .RespondWith(Response.Create()
                                          .WithStatusCode(200)
-                                         .WithBodyAsJson(new List<WeatherApiModel>
+                                         .WithBodyAsJson(new List<TestLibrary.S107.Models.External.WeatherApiModel>
                                          {
                                            new()
                                            {
@@ -132,7 +132,7 @@ public partial class WeatherOrchestratorTests
                                   .UsingGet())
                     .RespondWith(Response.Create()
                                          .WithStatusCode(200)
-                                         .WithBodyAsJson(new List<WeatherApiModel>
+                                         .WithBodyAsJson(new List<TestLibrary.S107.Models.External.WeatherApiModel>
                                          {
                                            new()
                                            {
@@ -167,7 +167,7 @@ public partial class WeatherOrchestratorTests
                                   .UsingGet())
                     .RespondWith(Response.Create()
                                          .WithStatusCode(200)
-                                         .WithBodyAsJson(new List<WeatherApiModel>
+                                         .WithBodyAsJson(new List<TestLibrary.S107.Models.External.WeatherApiModel>
                                          {
                                            new()
                                            {
@@ -201,7 +201,7 @@ public partial class WeatherOrchestratorTests
                                   .UsingGet())
                     .RespondWith(Response.Create()
                                          .WithStatusCode(200)
-                                         .WithBodyAsJson(new List<WeatherApiModel>
+                                         .WithBodyAsJson(new List<TestLibrary.S107.Models.External.WeatherApiModel>
                                          {
                                            new()
                                            {
@@ -235,7 +235,7 @@ public partial class WeatherOrchestratorTests
                                   .UsingGet())
                     .RespondWith(Response.Create()
                                          .WithStatusCode(200)
-                                         .WithBodyAsJson(new List<WeatherApiModel>
+                                         .WithBodyAsJson(new List<TestLibrary.S107.Models.External.WeatherApiModel>
                                          {
                                            new()
                                            {
@@ -269,7 +269,7 @@ public partial class WeatherOrchestratorTests
                                   .UsingGet())
                     .RespondWith(Response.Create()
                                          .WithStatusCode(200)
-                                         .WithBodyAsJson(new List<WeatherApiModel>
+                                         .WithBodyAsJson(new List<TestLibrary.S107.Models.External.WeatherApiModel>
                                          {
                                            new()
                                            {
@@ -304,7 +304,7 @@ public partial class WeatherOrchestratorTests
                                   .UsingGet())
                     .RespondWith(Response.Create()
                                          .WithStatusCode(200)
-                                         .WithBodyAsJson(new List<WeatherApiModel>
+                                         .WithBodyAsJson(new List<TestLibrary.S107.Models.External.WeatherApiModel>
                                          {
                                            new()
                                            {
@@ -338,7 +338,7 @@ public partial class WeatherOrchestratorTests
                                   .UsingGet())
                     .RespondWith(Response.Create()
                                          .WithStatusCode(200)
-                                         .WithBodyAsJson(new List<WeatherApiModel>
+                                         .WithBodyAsJson(new List<TestLibrary.S107.Models.External.WeatherApiModel>
                                          {
                                            new()
                                            {

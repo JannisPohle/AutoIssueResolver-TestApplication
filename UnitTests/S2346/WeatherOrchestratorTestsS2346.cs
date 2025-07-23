@@ -22,7 +22,7 @@ public sealed partial class WeatherOrchestratorTests: IDisposable
   public async Task WeatherOrchestrator_AccessModeNone_ShouldFail()
   {
     // Act
-    var result = await _weatherOrchestrator.GetWeather(AccessModes.Nothing);
+    var result = await _weatherOrchestrator.GetWeather(0);
 
     // Assert
     result.Should().NotBeNull();

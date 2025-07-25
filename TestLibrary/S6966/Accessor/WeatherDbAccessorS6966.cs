@@ -50,20 +50,20 @@ public sealed class WeatherDbAccessor: WeatherAccessorBase, IDisposable
     }
   }
 
-  private void CloseConnection()
+  private async Task CloseConnectionAsync()
   {
     if (_connection != null && _connection.State != ConnectionState.Closed)
     {
-      _connection.Close();
+      await _connection.CloseAsync();
     }
   }
 
-  private void Dispose(bool disposing)
+  private async void Dispose(bool disposing)
   {
     if (disposing)
     {
-      CloseConnection();
-      _connection?.Dispose();
+      await CloseConnectionAsync();
+      await _connection?.DisposeAsync();
     }
   }
 
@@ -86,7 +86,7 @@ public sealed class WeatherDbAccessor: WeatherAccessorBase, IDisposable
 
     await using var reader = await cmd.ExecuteReaderAsync();
 
-    while (reader.Read())
+    while (await reader.ReadAsync())
     {
       var temperature = reader.GetInt32(0);
       weatherList.Add(new WeatherModelCelsius(temperature));

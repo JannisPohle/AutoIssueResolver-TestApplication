@@ -45,20 +45,20 @@ public class WeatherOrchestrator: IWeatherOrchestrator
         case AccessMode.Mock:
           result = await _mockAccessor.GetWeather(argument);
           break;
-        default:
-          throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
         case AccessMode.Database:
           result = await GetWeatherDataFromDbAccessor(argument);
           break;
         case AccessMode.Web:
           result = await _apiAccessor.GetWeather(argument);
           break;
+        default:
+          throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
       }
 
       _logger.LogInformation("Retrieved {Count} weather records", result.Count);
 
       return Result<List<WeatherModelCelsius>>.Success(result);
-    }
+    } 
     catch (Exception e)
     {
       _logger.LogError(e, "Error retrieving weather data");

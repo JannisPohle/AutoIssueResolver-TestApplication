@@ -2,7 +2,6 @@ using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using TestLibrary.S2275.Abstractions;
 using TestLibrary.S2275.Accessor;
-using TestLibrary.S2275.Models;
 
 namespace TestLibrary.S2275;
 
@@ -33,7 +32,7 @@ public class WeatherOrchestrator: IWeatherOrchestrator
         return Result<List<WeatherModelCelsius>>.Failure(new ArgumentException("Access mode must be specified", nameof(mode)));
       }
 
-      _logger.LogInformation("Getting weather from {AccessMode} with Argument: {Argument}", mode, argument);
+      _logger.LogInformation("Getting weather from {0} with Argument: {1}", mode, argument);
 
       var result = mode switch
       {
@@ -41,10 +40,10 @@ public class WeatherOrchestrator: IWeatherOrchestrator
         AccessMode.Mock => await _mockAccessor.GetWeather(argument),
         AccessMode.Database => await _dbAccessor.GetWeather(argument),
         AccessMode.Web => await _apiAccessor.GetWeather(argument),
-        _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, string.Format("Specified access mode '{0]' is not supported", mode))
+        _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, string.Format("Specified access mode '{0}' is not supported", mode))
       };
 
-      _logger.LogInformation("Retrieved {Count} weather records", result.Count);
+      _logger.LogInformation("Retrieved {0} weather records", result.Count);
 
       return Result<List<WeatherModelCelsius>>.Success(result);
     }

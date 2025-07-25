@@ -5,7 +5,7 @@ namespace TestLibrary.S2696.Accessor;
 
 public class WeatherMockAccessor: WeatherAccessorBase
 {
-  private static int _callCount = 0;
+  private int _callCount = 0;
 
   public WeatherMockAccessor(ILogger<WeatherMockAccessor> logger)
     : base(logger)
@@ -14,7 +14,7 @@ public class WeatherMockAccessor: WeatherAccessorBase
   public override Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
     _callCount++;
-    var weather = GenerateWeatherData(argument).ToList();
+    var weather = GenerateWeatherData(argument, _callCount).ToList();
 
     if (!weather.Any())
     {
@@ -24,14 +24,14 @@ public class WeatherMockAccessor: WeatherAccessorBase
     return Task.FromResult(weather.ToList());
   }
 
-  private static IEnumerable<WeatherModelCelsius> GenerateWeatherData(string? argument)
+  private static IEnumerable<WeatherModelCelsius> GenerateWeatherData(string? argument, int callCount)
   {
-    var random = string.IsNullOrWhiteSpace(argument) ? new Random(_callCount) : new Random(argument?.GetHashCode() ?? 0);
+    var random = string.IsNullOrWhiteSpace(argument) ? new Random(callCount) : new Random(argument?.GetHashCode() ?? 0);
 
     int count;
     if (string.IsNullOrWhiteSpace(argument))
     {
-      count = _callCount; // Default to the number of calls to the accessor if no argument is provided
+      count = callCount; // Default to the number of calls to the accessor if no argument is provided
     }
     else if (!int.TryParse(argument, out count))
     {

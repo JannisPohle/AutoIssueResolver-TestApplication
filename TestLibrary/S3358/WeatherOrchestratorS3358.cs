@@ -27,7 +27,39 @@ public class WeatherOrchestrator: IWeatherOrchestrator
   {
     try
     {
-      Result<List<WeatherModelCelsius>>? validationResult;
-      if (mode == AccessMode.None)
+      var validationResult = mode == AccessMode.None ? Result<List<WeatherModelCelsius>>.Failure(new ArgumentException("Access mode must be specified", nameof(mode)))
+                             : !Enum.IsDefined(typeof(AccessMode), mode) ? Result<List<WeatherModelCelsius>>.Failure( new ArgumentOutOfRangeException(nameof(mode), mode, null)) : null;
+      if (validationResult != null)
       {
-        validationResult = Result<List<WeatherModelCelsius>>.Failure(new ArgumentException(
+        return validationResult;
+      }
+
+      _logger.LogInformation("Getting weather from {AccessMode} with Argument: {Argument}", mode, argument);
+
+      var result = mode switch
+      {
+        AccessMode.File => await _fileAccessor.GetWeather(argument),
+        AccessMode.Mock => await _mockAccessor.GetWeather(argument),
+        AccessMode.Database => await GetWeatherDataFromDbAccessor(argument),
+        AccessMode.Web => await _apiAccessor.GetWeather(argument),
+        _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, null)
+      };
+
+      _logger.LogInformation("Retrieved {Count} weather records", result.Count);
+
+      return Result<List<WeatherModelCelsius>>.Success(result);
+    }
+    catch (Exception e)
+    {
+      _logger.LogError(e, "Error retrieving weather data");
+
+      return Result<List<WeatherModelCelsius>>.Failure(e);
+    }
+  }
+
+  private async Task<List<WeatherModelCelsius>> GetWeatherDataFromDbAccessor(string? argument)
+  {
+    await _dbAccessor.OpenConnection(argument);
+    return await _dbAccessor.GetWeather(argument);
+  }
+}

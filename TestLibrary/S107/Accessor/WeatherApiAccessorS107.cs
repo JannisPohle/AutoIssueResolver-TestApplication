@@ -14,41 +14,41 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
 
   #region Methods
 
-  public async Task<List<WeatherModelCelsius>> GetWeather(WeatherApiRequest request)
+  public async Task<List<WeatherModelCelsius>> GetWeather(string? location, string? startTime, string? endTime, string? longitude, string? latitude, string? unit)
   {
     try
     {
       var url = "http://localhost:31246/v1/api/weather";
 
       Dictionary<string, string> queryParams = new();
-      if (!string.IsNullOrWhiteSpace(request.Location))
+      if (!string.IsNullOrWhiteSpace(location))
       {
-        queryParams.Add("location", request.Location);
+        queryParams.Add("location", location);
       }
 
-      if (!string.IsNullOrWhiteSpace(request.StartTime))
+      if (!string.IsNullOrWhiteSpace(startTime))
       {
-        queryParams.Add("startTime", request.StartTime);
+        queryParams.Add("startTime", startTime);
       }
 
-      if (!string.IsNullOrWhiteSpace(request.EndTime))
+      if (!string.IsNullOrWhiteSpace(endTime))
       {
-        queryParams.Add("endTime", request.EndTime);
+        queryParams.Add("endTime", endTime);
       }
 
-      if (!string.IsNullOrWhiteSpace(request.Longitude))
+      if (!string.IsNullOrWhiteSpace(longitude))
       {
-        queryParams.Add("longitude", request.Longitude);
+        queryParams.Add("longitude", longitude);
       }
 
-      if (!string.IsNullOrWhiteSpace(request.Latitude))
+      if (!string.IsNullOrWhiteSpace(latitude))
       {
-        queryParams.Add("latitude", request.Latitude);
+        queryParams.Add("latitude", latitude);
       }
 
-      if (!string.IsNullOrWhiteSpace(request.Unit))
+      if (!string.IsNullOrWhiteSpace(unit))
       {
-        queryParams.Add("unit", request.Unit);
+        queryParams.Add("unit", unit);
       }
 
       var queryUrl = string.Empty;
@@ -79,17 +79,15 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
     }
     catch (Exception e)
     {
-      Logger.LogWarning(e, "Failed to get weather data with arguments:  {Location}, {StartTime}, {EndTime}, {Longitude}, {Latitude}, {Unit}", request.Location, request.StartTime, request.EndTime, request.Longitude, request.Latitude, request.Unit);
+      Logger.LogWarning(e, "Failed to get weather data with arguments:  {Location}, {StartTime}, {EndTime}, {Longitude}, {Latitude}, {Unit}", location, startTime, endTime, longitude, latitude, unit);
 
-      throw new ConnectionFailedException($"Failed to connect to the weather API with arguments: {request.Location}, {request.StartTime}, {request.EndTime}, {request.Longitude}, {request.Latitude}, {request.Unit}.", e);
+      throw new ConnectionFailedException($"Failed to connect to the weather API with arguments: {location}, {startTime}, {endTime}, {longitude}, {latitude}, {unit}.", e);
     }
   }
 
   public override async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
-    var request = WeatherApiRequest.CreateFromArgument(argument);
-
-    return await GetWeather(request);
+    return await GetWeather(argument, null, null, null, null, null);
   }
 
   private void Dispose(bool disposing)
@@ -107,28 +105,4 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
   }
 
   #endregion
-}
-
-public record WeatherApiRequest
-{
-  public string? Location { get; init; }
-  public string? StartTime { get; init; }
-  public string? EndTime { get; init; }
-  public string? Longitude { get; init; }
-  public string? Latitude { get; init; }
-  public string? Unit { get; init; }
-
-  public static WeatherApiRequest CreateFromArgument(string? argument)
-  {
-    var arguments = argument?.Split(';') ?? [];
-    return new WeatherApiRequest
-    {
-      Location = arguments.ElementAtOrDefault(0),
-      StartTime = arguments.ElementAtOrDefault(1),
-      EndTime = arguments.ElementAtOrDefault(2),
-      Longitude = arguments.ElementAtOrDefault(3),
-      Latitude = arguments.ElementAtOrDefault(4),
-      Unit = arguments.ElementAtOrDefault(5)
-    };
-  }
 }

@@ -14,7 +14,7 @@ public sealed class WeatherApiAccessor: WeatherAccessorBase, IDisposable
 
   #region Constructors
 
-  public WeatherApiAccessor(ILogger<WeatherAccessorBase> logger)
+  public WeatherApiAccessor(ILogger<WeatherApiAccessor> logger)
     : base(logger)
   { }
 
@@ -57,23 +57,4 @@ public sealed class WeatherApiAccessor: WeatherAccessorBase, IDisposable
     {
       Logger.LogWarning(e, "Failed to get weather data with argument: {Argument}", argument);
 
-      throw new ConnectionFailedException($"Failed to connect to the weather API with argument: {argument}.", e);
-    }
-  }
-
-  private void Dispose(bool disposing)
-  {
-    if (disposing)
-    {
-      _httpClient.Dispose();
-    }
-  }
-
-  public void Dispose()
-  {
-    Dispose(true);
-    GC.SuppressFinalize(this);
-  }
-
-  #endregion
-}
+      throw new ConnectionFailedException($

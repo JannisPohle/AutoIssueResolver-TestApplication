@@ -6,16 +6,11 @@ public class WeatherModelCelsius: WeatherModelBase
 {
   public int Temperature { get; }
 
-  public override string Unit { get; protected set; }
+  public override string Unit => "Celsius";
 
   [JsonConstructor]
   public WeatherModelCelsius(int temperature)
   {
     Temperature = temperature;
-  }
-
-  protected override void SetUnit()
-  {
-    Unit = "Celsius";
   }
 }

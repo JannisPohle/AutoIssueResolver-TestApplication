@@ -6,7 +6,7 @@ public abstract class WeatherModelBase
 
   public abstract string Unit { get; }
 
-  public WeatherModelBase()
+  protected WeatherModelBase()
   {
     Date = DateOnly.FromDateTime(DateTime.Now);
   }

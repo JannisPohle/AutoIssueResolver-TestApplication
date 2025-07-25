@@ -37,7 +37,7 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
 
       var weatherData = new List<WeatherModelCelsius>();
 
-      for (int i = 0;;i++)
+      for (int i = 0; i < response.Count;i++)
       {
         if (i >= response.Count)
         {

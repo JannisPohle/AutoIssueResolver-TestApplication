@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using TestLibrary.S6561.Abstractions;
 using TestLibrary.S6561.Accessor;
@@ -25,7 +26,7 @@ public class WeatherOrchestrator: IWeatherOrchestrator
 
   public async Task<Result<List<WeatherModelCelsius>>> GetWeather(AccessMode mode, string? argument = null)
   {
-    var start = DateTime.Now;
+    var stopWatch = Stopwatch.StartNew();
     try
     {
       if (mode == AccessMode.None)
@@ -48,7 +49,7 @@ public class WeatherOrchestrator: IWeatherOrchestrator
       _logger.LogInformation("Retrieved {Count} weather records", result.Count);
 
       return Result<List<WeatherModelCelsius>>.Success(result);
-    }
+    } 
     catch (Exception e)
     {
       _logger.LogError(e, "Error retrieving weather data");
@@ -57,7 +58,8 @@ public class WeatherOrchestrator: IWeatherOrchestrator
     }
     finally
     {
-      _logger.LogInformation("Finished getting weather data after {ElapsedMilliseconds} ms", (DateTime.Now - start).TotalMilliseconds);
+      stopWatch.Stop();
+      _logger.LogInformation("Finished getting weather data after {ElapsedMilliseconds} ms", stopWatch.ElapsedMilliseconds);
     }
   }
 

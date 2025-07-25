@@ -39,14 +39,6 @@ public sealed class WeatherDbAccessor: WeatherAccessorBase, IDisposable
     }
   }
 
-  private static void CloseConnection(SqliteConnection? connection)
-  {
-    if (connection != null && connection.State != ConnectionState.Closed)
-    {
-      connection.Close();
-    }
-  }
-
   private void Dispose(bool disposing)
   {
     if (disposing)
@@ -83,29 +75,14 @@ public sealed class WeatherDbAccessor: WeatherAccessorBase, IDisposable
 
   private sealed class DatabaseManager: IDisposable, IAsyncDisposable
   {
-    public void Dispose()
-    {
-      CloseConnection(_connection);
-      _connection?.Dispose();
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-      if (_connection != null)
-      {
-        CloseConnection(_connection);
-        await _connection.DisposeAsync();
-      }
-    }
-
-    private SqliteConnection? _connection;
-    
     #region Static
 
     private const string CONNECTION_STRING = "Data Source=TestFiles/weather.db";
 
     #endregion
 
+    private SqliteConnection? _connection;
+    
     public async Task<SqliteConnection> InitializeConnection(string? argument)
     {
       _connection ??= new SqliteConnection(argument ?? CONNECTION_STRING);
@@ -127,6 +104,29 @@ public sealed class WeatherDbAccessor: WeatherAccessorBase, IDisposable
       var cmd = _connection!.CreateCommand();
 
       return cmd;
+    }
+
+        private static void CloseConnection(SqliteConnection? connection)
+    {
+      if (connection != null && connection.State != ConnectionState.Closed)
+      {
+        connection.Close();
+      }
+    }
+
+    public void Dispose()
+    {
+      CloseConnection(_connection);
+      _connection?.Dispose();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+      if (_connection != null)
+      {
+        CloseConnection(_connection);
+        await _connection.DisposeAsync();
+      }
     }
   }
 }

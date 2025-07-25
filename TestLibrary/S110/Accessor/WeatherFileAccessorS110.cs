@@ -33,16 +33,24 @@ public class WeatherFileAccessor: WeatherAccessorBase
     return weather;
   }
 
-  private static async Task<string> ReadFromFile(string filePath)
+  private async Task<string> ReadFromFile(string filePath)
   {
-    await using var fs = new FileStream(filePath, FileMode.Open);
-    var content = new byte[fs.Length];
-    var bytesRead = 0;
-    while (bytesRead < fs.Length)
+    try
     {
-      bytesRead += await fs.ReadAsync(content, bytesRead, content.Length - bytesRead);
-    }
+      await using var fs = new FileStream(filePath, FileMode.Open);
+      var content = new byte[fs.Length];
+      var bytesRead = 0;
+      while (bytesRead < fs.Length)
+      {
+        bytesRead += await fs.ReadAsync(content, bytesRead, content.Length - bytesRead);
+      }
 
-    return Encoding.UTF8.GetString(content);
+      return Encoding.UTF8.GetString(content);
+    }
+    catch (Exception ex)
+    {
+      Logger.LogError(ex, "Error reading from file: {FilePath}", filePath);
+      throw;
+    }
   }
 }

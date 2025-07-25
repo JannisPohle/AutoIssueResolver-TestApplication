@@ -58,11 +58,11 @@ public class WeatherOrchestrator: IWeatherOrchestrator
 
   public async Task ChangeUnit(string newUnit)
   {
-    SetUnitInternal(newUnit);
+    //SetUnitInternal(newUnit);
   }
 
-  private static void SetUnitInternal(string newUnit)
-  {
-    Constants.Unit = newUnit;
-  }
+  //private static void SetUnitInternal(string newUnit)
+  //{
+  //  Constants.Unit = newUnit;
+  //}
 }

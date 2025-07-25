@@ -1,3 +1,5 @@
+using System.Runtime.Serialization;
+
 namespace TestLibrary.S3925.Models;
 
 [Serializable]
@@ -12,4 +14,16 @@ public class DataNotFoundException: Exception
   public DataNotFoundException(string? message, Exception? innerException)
     : base(message, innerException)
   { }
+
+  protected DataNotFoundException(SerializationInfo info, StreamingContext context)
+  : base(info, context)
+  {
+    Argument = info.GetString("Argument");
+  }
+
+  public override void GetObjectData(SerializationInfo info, StreamingContext context)
+  {
+    base.GetObjectData(info, context);
+    info.AddValue("Argument", Argument);
+  }
 }

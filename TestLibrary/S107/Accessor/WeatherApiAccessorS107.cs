@@ -14,41 +14,54 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
 
   #region Methods
 
-  public async Task<List<WeatherModelCelsius>> GetWeather(string? location, string? startTime, string? endTime, string? longitude, string? latitude, string? unit)
+  public async Task<List<WeatherModelCelsius>> GetWeather(
+    string? location,
+    string? startTime,
+    string? endTime,
+    string? longitude,
+    string? latitude,
+    string? unit
+  )
+  {
+    var weatherRequest = new WeatherRequest(location, startTime, endTime, longitude, latitude, unit);
+    return await GetWeather(weatherRequest);
+  }
+
+  public async Task<List<WeatherModelCelsius>> GetWeather(WeatherRequest weatherRequest)
   {
     try
     {
       var url = "http://localhost:31246/v1/api/weather";
 
       Dictionary<string, string> queryParams = new();
-      if (!string.IsNullOrWhiteSpace(location))
+      if (!string.IsNullOrWhiteSpace(weatherRequest.Location))
       {
-        queryParams.Add("location", location);
+        queryParams.Add("location", weatherRequest.Location);
       }
 
-      if (!string.IsNullOrWhiteSpace(startTime))
+      if (!string.IsNullOrWhiteSpace(weatherRequest.StartTime))
       {
-        queryParams.Add("startTime", startTime);
+        queryParams.Add("startTime", weatherRequest.StartTime);
       }
 
-      if (!string.IsNullOrWhiteSpace(endTime))
+      if (!string.IsNullOrWhiteSpace(weatherRequest.EndTime))
       {
-        queryParams.Add("endTime", endTime);
+        queryParams.Add("endTime", weatherRequest.EndTime);
       }
 
-      if (!string.IsNullOrWhiteSpace(longitude))
+      if (!string.IsNullOrWhiteSpace(weatherRequest.Longitude))
       {
-        queryParams.Add("longitude", longitude);
+        queryParams.Add("longitude", weatherRequest.Longitude);
       }
 
-      if (!string.IsNullOrWhiteSpace(latitude))
+      if (!string.IsNullOrWhiteSpace(weatherRequest.Latitude))
       {
-        queryParams.Add("latitude", latitude);
+        queryParams.Add("latitude", weatherRequest.Latitude);
       }
 
-      if (!string.IsNullOrWhiteSpace(unit))
+      if (!string.IsNullOrWhiteSpace(weatherRequest.Unit))
       {
-        queryParams.Add("unit", unit);
+        queryParams.Add("unit", weatherRequest.Unit);
       }
 
       var queryUrl = string.Empty;
@@ -79,15 +92,19 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
     }
     catch (Exception e)
     {
-      Logger.LogWarning(e, "Failed to get weather data with arguments:  {Location}, {StartTime}, {EndTime}, {Longitude}, {Latitude}, {Unit}", location, startTime, endTime, longitude, latitude, unit);
+      Logger.LogWarning(e, "Failed to get weather data with arguments:  {Location}, {StartTime}, {EndTime}, {Longitude}, {Latitude}, {Unit}", weatherRequest.Location, weatherRequest.StartTime, weatherRequest.EndTime, weatherRequest.Longitude, weatherRequest.Latitude, weatherRequest.Unit);
 
-      throw new ConnectionFailedException($"Failed to connect to the weather API with arguments: {location}, {startTime}, {endTime}, {longitude}, {latitude}, {unit}.", e);
+      throw new ConnectionFailedException($"Failed to connect to the weather API with arguments: {weatherRequest.Location}, {weatherRequest.StartTime}, {weatherRequest.EndTime}, {weatherRequest.Longitude}, {weatherRequest.Latitude}, {weatherRequest.Unit}.", e);
     }
   }
 
   public override async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
-    return await GetWeather(argument, null, null, null, null, null);
+    WeatherRequest weatherRequest = new()
+    {
+      Location = argument
+    };
+    return await GetWeather(weatherRequest);
   }
 
   private void Dispose(bool disposing)
@@ -105,4 +122,24 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
   }
 
   #endregion
+}
+
+public class WeatherRequest
+{
+  public string? Location { get; set; }
+  public string? StartTime { get; set; }
+  public string? EndTime { get; set; }
+  public string? Longitude { get; set; }
+  public string? Latitude { get; set; }
+  public string? Unit { get; set; }
+
+  public WeatherRequest(string? location = null, string? startTime = null, string? endTime = null, string? longitude = null, string? latitude = null, string? unit = null)
+  {
+    Location = location;
+    StartTime = startTime;
+    EndTime = endTime;
+    Longitude = longitude;
+    Latitude = latitude;
+    Unit = unit;
+  }
 }

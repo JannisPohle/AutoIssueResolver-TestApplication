@@ -50,7 +50,6 @@ public class WeatherOrchestrator: IWeatherOrchestrator
           result = await _apiAccessor.GetWeather(argument);
 
           break;
-        case AccessMode.None:
         default:
           _logger.LogWarning("No valid access mode provided, returning empty list");
           break;

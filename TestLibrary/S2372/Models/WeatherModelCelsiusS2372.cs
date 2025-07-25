@@ -6,12 +6,18 @@ public class WeatherModelCelsius: WeatherModelBase
 {
   private readonly int? _temperature;
 
-  public int Temperature => _temperature ?? throw new ArgumentException("Temperature must not be null.") switch
+  public int Temperature
   {
-    < -273 => throw new ArgumentException("Temperature must be between -273°C and 100°C."),
-    > 100 => throw new ArgumentException("Temperature must be between -273°C and 100°C."),
-    _ => _temperature.Value
-  };
+    get
+    {
+      if (_temperature == null || _temperature < -273 || _temperature > 100)
+      {
+        throw new ArgumentException("Temperature must not be null and be between -273°C and 100°C.");
+      }
+
+      return _temperature.Value;
+    }
+  }
 
   public override string Unit => "Celsius";
 

@@ -1,4 +1,4 @@
-using System.Text;
+using System.Text; 
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using TestLibrary.S2930.Models;
@@ -27,14 +27,16 @@ public class WeatherFileAccessor: WeatherAccessorBase
 
   private static async Task<string> ReadFromFile(string filePath)
   {
-    var fs = new FileStream(filePath, FileMode.Open);
-    var content = new byte[fs.Length];
-    var bytesRead = 0;
-    while (bytesRead < fs.Length)
+    using (var fs = new FileStream(filePath, FileMode.Open))
     {
-      bytesRead += await fs.ReadAsync(content, bytesRead, content.Length - bytesRead);
-    }
+      var content = new byte[fs.Length];
+      var bytesRead = 0;
+      while (bytesRead < fs.Length)
+      {
+        bytesRead += await fs.ReadAsync(content, bytesRead, content.Length - bytesRead);
+      }
 
-    return Encoding.UTF8.GetString(content);
+      return Encoding.UTF8.GetString(content);
+    }
   }
 }

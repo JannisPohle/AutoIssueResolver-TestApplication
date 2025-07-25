@@ -35,7 +35,7 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
         throw new DataNotFoundException($"No weather data found for argument: {argument}.");
       }
 
-      var weatherData = response.Items.Select(weatherModel => new WeatherModelCelsius((int) weatherModel.Temperature)).ToList();
+      var weatherData = response.GetItems().Select(weatherModel => new WeatherModelCelsius((int) weatherModel.Temperature)).ToList();
 
       Logger.LogInformation("Found {WeatherDataCount} weather data for location {Argument}.", weatherData.Count, argument);
 

@@ -3,22 +3,16 @@ using TestLibrary.S110.Models;
 
 namespace TestLibrary.S110.Accessor;
 
-public abstract class LoggerBase
+public abstract class WeatherAccessorBase
 {
   protected ILogger Logger { get; }
 
-  protected LoggerBase(ILogger logger)
+  #region Constructors
+
+  protected WeatherAccessorBase(ILogger logger)
   {
     Logger = logger ?? throw new ArgumentNullException(nameof(logger));
   }
-}
-
-public abstract class WeatherAccessorBase: LoggerBase
-{
-  #region Constructors
-
-  protected WeatherAccessorBase(ILogger<WeatherAccessorBase> logger): base(logger)
-  { }
 
   #endregion
 

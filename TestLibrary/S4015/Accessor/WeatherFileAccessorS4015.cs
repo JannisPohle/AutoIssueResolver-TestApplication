@@ -9,7 +9,8 @@ public class WeatherFileAccessor: WeatherAccessorBase
 {
   public WeatherFileAccessor(ILogger<WeatherFileAccessor> logger)
     : base(logger)
-  { }
+  {
+  }
 
   /// <inheritdoc />
   public override async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
@@ -40,6 +41,7 @@ public class WeatherFileAccessor: WeatherAccessorBase
     return Encoding.UTF8.GetString(content);
   }
 
+  
   private static void ValidateArgument(string? argument)
   {
     if (argument == null)

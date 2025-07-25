@@ -31,7 +31,7 @@ public sealed class WeatherDbAccessor: WeatherAccessorBase, IDisposable
 
   #region Methods
 
-  public async void OpenConnection(string? argument)
+  public async Task OpenConnection(string? argument)
   {
     try
     {

@@ -68,7 +68,7 @@ public class WeatherOrchestrator: IWeatherOrchestrator
   {
     foreach (var weatherEntry in weather)
     {
-      _ = weatherEntry.Temperature; // This will throw if Temperature is not set or in an invalid range, ensuring that the model is valid.
+      _ = weatherEntry.GetTemperature(); // This will throw if Temperature is not set or in an invalid range, ensuring that the model is valid.
     }
   }
 }

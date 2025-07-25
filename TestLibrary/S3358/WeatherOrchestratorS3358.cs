@@ -27,11 +27,13 @@ public class WeatherOrchestrator: IWeatherOrchestrator
   {
     try
     {
-      var validationResult = mode == AccessMode.None ? Result<List<WeatherModelCelsius>>.Failure(new ArgumentException("Access mode must be specified", nameof(mode)))
-                             : !Enum.IsDefined(typeof(AccessMode), mode) ? Result<List<WeatherModelCelsius>>.Failure( new ArgumentOutOfRangeException(nameof(mode), mode, null)) : null;
-      if (validationResult != null)
+      if (mode == AccessMode.None)
       {
-        return validationResult;
+        return Result<List<WeatherModelCelsius>>.Failure(new ArgumentException("Access mode must be specified", nameof(mode)));
+      }
+      if (!Enum.IsDefined(typeof(AccessMode), mode))
+      {
+        return Result<List<WeatherModelCelsius>>.Failure(new ArgumentOutOfRangeException(nameof(mode), mode, null));
       }
 
       _logger.LogInformation("Getting weather from {AccessMode} with Argument: {Argument}", mode, argument);

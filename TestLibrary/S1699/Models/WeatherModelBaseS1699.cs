@@ -4,11 +4,10 @@ public abstract class WeatherModelBase
 {
   public DateOnly Date { get; } = DateOnly.FromDateTime(DateTime.UtcNow);
 
-  public abstract string Unit { get; protected set; }
+  public abstract string Unit { get; }
 
   protected WeatherModelBase()
   {
-    SetUnit();
   }
 
   protected abstract void SetUnit();

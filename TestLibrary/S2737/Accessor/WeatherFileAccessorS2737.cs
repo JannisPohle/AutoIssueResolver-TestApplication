@@ -7,41 +7,46 @@ namespace TestLibrary.S2737.Accessor;
 
 public class WeatherFileAccessor: WeatherAccessorBase
 {
+  private readonly ILogger<WeatherFileAccessor> _logger;
+
   public WeatherFileAccessor(ILogger<WeatherFileAccessor> logger)
     : base(logger)
-  { }
+  {
+    _logger = logger;
+  }
 
   /// <inheritdoc />
   public override async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
-    var stringContent = await ReadFromFile(argument ?? "TestFiles/WeatherForecast.json");
-    var weather = JsonSerializer.Deserialize<IEnumerable<WeatherModelCelsius>>(stringContent, JsonSerializerOptions.Web)?.ToList();
-
-    if (weather == null)
+    try
     {
-      throw new InvalidOperationException("Failed to deserialize weather data.");
-    }
+      var stringContent = await ReadFromFile(argument ?? "TestFiles/WeatherForecast.json");
+      var weather = JsonSerializer.Deserialize<IEnumerable<WeatherModelCelsius>>(stringContent, JsonSerializerOptions.Web)?.ToList();
 
-    return weather;
+      if (weather == null)
+      {
+        throw new InvalidOperationException("Failed to deserialize weather data.");
+      }
+
+      return weather;
+    }
+    catch (Exception e)
+    {      
+      _logger.LogError(e, "Error reading from file");
+      throw;
+    }
   }
 
   private static async Task<string> ReadFromFile(string filePath)
   {
-    try
+    await using var fs = new FileStream(filePath, FileMode.Open);
+    var content = new byte[fs.Length];
+    var bytesRead = 0;
+    while (bytesRead < fs.Length)
     {
-      await using var fs = new FileStream(filePath, FileMode.Open);
-      var content = new byte[fs.Length];
-      var bytesRead = 0;
-      while (bytesRead < fs.Length)
-      {
-        bytesRead += await fs.ReadAsync(content, bytesRead, content.Length - bytesRead);
-      }
+      bytesRead += await fs.ReadAsync(content, bytesRead, content.Length - bytesRead);
+    }
 
-      return Encoding.UTF8.GetString(content);
-    }
-    catch (Exception)
-    {
-      throw;
-    }
+    return Encoding.UTF8.GetString(content);
   }
 }

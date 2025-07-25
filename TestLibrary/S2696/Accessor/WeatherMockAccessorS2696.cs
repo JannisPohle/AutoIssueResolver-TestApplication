@@ -24,9 +24,9 @@ public class WeatherMockAccessor: WeatherAccessorBase
     return Task.FromResult(weather.ToList());
   }
 
-  private static IEnumerable<WeatherModelCelsius> GenerateWeatherData(string? argument)
+  private IEnumerable<WeatherModelCelsius> GenerateWeatherData(string? argument)
   {
-    var random = string.IsNullOrWhiteSpace(argument) ? new Random(_callCount) : new Random(argument?.GetHashCode() ?? 0);
+    var random = string.IsNullOrWhiteSpace(argument) ? new Random() : new Random(argument?.GetHashCode() ?? 0);
 
     int count;
     if (string.IsNullOrWhiteSpace(argument))

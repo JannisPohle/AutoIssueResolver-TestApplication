@@ -9,7 +9,8 @@ public class WeatherFileAccessor: WeatherAccessorBase
 {
   public WeatherFileAccessor(ILogger<WeatherFileAccessor> logger)
     : base(logger)
-  { }
+  {
+  }
 
   /// <inheritdoc />
   public override async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
@@ -27,7 +28,7 @@ public class WeatherFileAccessor: WeatherAccessorBase
 
   private static async Task<string> ReadFromFile(string filePath)
   {
-    var fs = new FileStream(filePath, FileMode.Open);
+    using var fs = new FileStream(filePath, FileMode.Open);
     var content = new byte[fs.Length];
     var bytesRead = 0;
     while (bytesRead < fs.Length)

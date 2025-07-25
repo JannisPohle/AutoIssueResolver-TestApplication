@@ -33,82 +33,81 @@ public class WeatherOrchestrator: IWeatherOrchestrator
 
   #region Methods
 
+  private bool IsValidMode(AccessMode mode)
+  {
+    return mode != AccessMode.None && Enum.IsDefined(typeof(AccessMode), mode);
+  }
+
+  private async Task<List<WeatherModelCelsius>> GetWeatherData(AccessMode mode, string? argument)
+  {
+    var result = new List<WeatherModelCelsius>();
+
+    switch (mode)
+    {
+      case AccessMode.Database:
+        await _dbAccessor.OpenConnection(argument);
+        result.AddRange(await _dbAccessor.GetWeather(argument));
+        break;
+      case AccessMode.File:
+        result.AddRange(await _fileAccessor.GetWeather(argument));
+        break;
+      case AccessMode.Web:
+        result.AddRange(await _apiAccessor.GetWeather(argument));
+        break;
+      case AccessMode.Mock:
+        result.AddRange(await _mockAccessor.GetWeather(argument));
+        break;
+      default:
+        throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
+    }
+
+    return result;
+  }
+
+  private void ValidateWeatherData(List<WeatherModelCelsius> weatherData)
+  {
+    foreach (var weather in weatherData)
+    {
+      if (weather.Temperature > 120)
+      {
+        throw new ValidationException("Temperature cannot exceed 120 degrees Celsius");
+      }
+
+      if (weather.Temperature < -100)
+      {
+        throw new ValidationException("Temperature cannot be below -100 degrees Celsius");
+      }
+
+      if (string.IsNullOrWhiteSpace(weather.Unit))
+      {
+        throw new ValidationException("Unit cannot be null or empty");
+      }
+    }
+  }
+
   public async Task<Result<List<WeatherModelCelsius>>> GetWeather(AccessMode mode, string? argument = null)
   {
-    Result<List<WeatherModelCelsius>> finalResult;
+    if (!IsValidMode(mode))
+    {
+      return Result<List<WeatherModelCelsius>>.Failure(new ArgumentOutOfRangeException(nameof(mode), mode, null));
+    }
 
     try
     {
-      if (mode != AccessMode.None)
-      {
-        if (Enum.IsDefined(typeof(AccessMode), mode))
-        {
-          _logger.LogInformation("Getting weather from {AccessMode} with Argument: {Argument}", mode, argument);
+      _logger.LogInformation("Getting weather from {AccessMode} with Argument: {Argument}", mode, argument);
 
-          var result = new List<WeatherModelCelsius>();
+      var result = await GetWeatherData(mode, argument);
+      ValidateWeatherData(result);
 
-          if (mode == AccessMode.Database)
-          {
-            await _dbAccessor.OpenConnection(argument);
-            result.AddRange(await _dbAccessor.GetWeather(argument));
-          }
-          else if (mode == AccessMode.File)
-          {
-            result.AddRange(await _fileAccessor.GetWeather(argument));
-          }
-          else if (mode == AccessMode.Web)
-          {
-            result.AddRange(await _apiAccessor.GetWeather(argument));
-          }
-          else if (mode == AccessMode.Mock)
-          {
-            result.AddRange(await _mockAccessor.GetWeather(argument));
-          }
-          else
-          {
-            throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
-          }
+      _logger.LogInformation("Retrieved {Count} weather records", result.Count);
 
-          foreach (var weather in result)
-          {
-            if (weather.Temperature > 120)
-            {
-              throw new ValidationException("Temperature cannot exceed 120 degrees Celsius");
-            }
-
-            if (weather.Temperature < -100)
-            {
-              throw new ValidationException("Temperature cannot be below -100 degrees Celsius");
-            }
-
-            if (string.IsNullOrWhiteSpace(weather.Unit))
-            {
-              throw new ValidationException("Unit cannot be null or empty");
-            }
-          }
-
-          _logger.LogInformation("Retrieved {Count} weather records", result.Count);
-
-          finalResult = Result<List<WeatherModelCelsius>>.Success(result);
-        }
-        else
-        {
-          finalResult = Result<List<WeatherModelCelsius>>.Failure(new ArgumentOutOfRangeException(nameof(mode), mode, null));
-        }
-      }
-      else
-      {
-        finalResult = Result<List<WeatherModelCelsius>>.Failure(new ArgumentException("Access mode must be specified", nameof(mode)));
-      }
+      return Result<List<WeatherModelCelsius>>.Success(result);
     }
     catch (Exception e)
     {
       _logger.LogError(e, "Error retrieving weather data");
-
-      finalResult = Result<List<WeatherModelCelsius>>.Failure(e);
+      return Result<List<WeatherModelCelsius>>.Failure(e);
     }
-
-    return finalResult;
   }
 
   #endregion

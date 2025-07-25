@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
 using TestLibrary.S3903.Models;
+using TestLibrary.S3903.Models.External;
 
 namespace TestLibrary.S3903.Accessor;
 

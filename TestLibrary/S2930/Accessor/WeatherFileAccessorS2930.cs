@@ -27,7 +27,7 @@ public class WeatherFileAccessor: WeatherAccessorBase
 
   private static async Task<string> ReadFromFile(string filePath)
   {
-    var fs = new FileStream(filePath, FileMode.Open);
+    using var fs = new FileStream(filePath, FileMode.Open);
     var content = new byte[fs.Length];
     var bytesRead = 0;
     while (bytesRead < fs.Length)

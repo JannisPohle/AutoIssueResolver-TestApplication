@@ -22,7 +22,6 @@ public class WeatherOrchestrator: IWeatherOrchestrator
     _logger = logger;
   }
 
-
   public async Task<Result<List<WeatherModelCelsius>>> GetWeather(AccessMode mode, string? argument = null)
   {
     try
@@ -56,12 +55,6 @@ public class WeatherOrchestrator: IWeatherOrchestrator
     }
   }
 
-  private async Task<List<WeatherModelCelsius>> GetWeatherDataFromDbAccessor(string? argument)
-  {
-    await _dbAccessor.OpenConnection(argument);
-    return await _dbAccessor.GetWeather(argument);
-  }
-
   public async Task<Result<List<WeatherModelCelsius>>> GetWeather(AccessMode mode, string? argument, bool throwOnError)
   {
     var result = await GetWeather(mode, argument);
@@ -73,5 +66,11 @@ public class WeatherOrchestrator: IWeatherOrchestrator
     }
 
     throw result.Exception!;
+  }
+
+  private async Task<List<WeatherModelCelsius>> GetWeatherDataFromDbAccessor(string? argument)
+  {
+    await _dbAccessor.OpenConnection(argument);
+    return await _dbAccessor.GetWeather(argument);
   }
 }

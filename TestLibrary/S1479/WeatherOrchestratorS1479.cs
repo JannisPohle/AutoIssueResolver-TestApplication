@@ -22,7 +22,6 @@ public class WeatherOrchestrator: IWeatherOrchestrator
     _logger = logger;
   }
 
-
   public async Task<Result<List<WeatherModelCelsius>>> GetWeather(string mode, string? argument = null)
   {
     try
@@ -34,22 +33,20 @@ public class WeatherOrchestrator: IWeatherOrchestrator
 
       _logger.LogInformation("Getting weather from {AccessMode} with Argument: {Argument}", mode, argument);
 
-
       var result = new List<WeatherModelCelsius>();
       switch (mode)
       {
         case "File":
-          result.AddRange(await _fileAccessor.GetWeather(argument));
+          await HandleFileMode(argument, result);
           break;
         case "Mock":
-          result.AddRange(await _mockAccessor.GetWeather(argument));
+          await HandleMockMode(argument, result);
           break;
         case "Database":
-          await _dbAccessor.OpenConnection(argument);
-          result.AddRange(await _dbAccessor.GetWeather(argument));
+          await HandleDatabaseMode(argument, result);
           break;
         case "Web":
-          result.AddRange(await _apiAccessor.GetWeather(argument));
+          await HandleWebMode(argument, result);
           break;
         default:
           throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
@@ -65,5 +62,26 @@ public class WeatherOrchestrator: IWeatherOrchestrator
 
       return Result<List<WeatherModelCelsius>>.Failure(e);
     }
+  }
+
+  private async Task HandleFileMode(string? argument, List<WeatherModelCelsius> result)
+  {
+    result.AddRange(await _fileAccessor.GetWeather(argument));
+  }
+
+  private async Task HandleMockMode(string? argument, List<WeatherModelCelsius> result)
+  {
+    result.AddRange(await _mockAccessor.GetWeather(argument));
+  }
+
+  private async Task HandleDatabaseMode(string? argument, List<WeatherModelCelsius> result)
+  {
+    await _dbAccessor.OpenConnection(argument);
+    result.AddRange(await _dbAccessor.GetWeather(argument));
+  }
+
+  private async Task HandleWebMode(string? argument, List<WeatherModelCelsius> result)
+  {
+    result.AddRange(await _apiAccessor.GetWeather(argument));
   }
 }

@@ -1,47 +1,52 @@
-using Microsoft.AspNetCore.Mvc;
-using TestLibrary.S6962.Models;
-
-namespace WebApplication.Controllers.S6962;
+// File: Startup.cs
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddHttpClient();
+        // ...
+    }
+}
 
 [ApiController]
 [Route("[controller]")]
-public class S6962Controller: ControllerBase
+public class S6962Controller : ControllerBase
 {
-  private readonly ILogger<S6962Controller> _logger;
+    private readonly ILogger<S6962Controller> _logger;
+    private readonly IHttpClientFactory _clientFactory;
 
-  public S6962Controller(ILogger<S6962Controller> logger)
-  {
-    _logger = logger;
-  }
-
-  [HttpGet("external")]
-  public async Task<IActionResult> GetWeatherForecast([FromQuery] string? argument = null)
-  {
-    try
+    public S6962Controller(ILogger<S6962Controller> logger, IHttpClientFactory clientFactory)
     {
-      _logger.LogTrace("Get WeatherForecast");
-
-      using var httpClient = new HttpClient
-      {
-        BaseAddress = new Uri("http://localhost:31246/api/"),
-      };
-
-      var result = await httpClient.GetFromJsonAsync<List<WeatherModelCelsius>>("weather" + (string.IsNullOrWhiteSpace(argument) ? null : $"?location={argument}"));
-
-      if (result == null || result.Count == 0)
-      {
-        _logger.LogWarning("No data found from API endpoint for location: {Argument}", argument);
-
-        return NotFound();
-      }
-
-      return Ok(result);
+        _logger = logger;
+        _clientFactory = clientFactory;
     }
-    catch (Exception e)
+
+    [HttpGet("external")]
+    public async Task<IActionResult> GetWeatherForecast([FromQuery] string? argument = null)
     {
-      _logger.LogError(e, "Error reading WeatherForecast data");
+        try
+        {
+            _logger.LogTrace("Get WeatherForecast");
 
-      return BadRequest();
+            var client = _clientFactory.CreateClient(); // Compliant (Basic usage)
+            client.BaseAddress = new Uri("http://localhost:31246/api/");
+
+            var result = await client.GetFromJsonAsync<List<WeatherModelCelsius>>("weather" + (string.IsNullOrWhiteSpace(argument) ? null : $"?location={argument}"));
+
+            if (result == null || result.Count == 0)
+            {
+                _logger.LogWarning("No data found from API endpoint for location: {{Argument}}", argument);
+
+                return NotFound();
+            }
+
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error reading WeatherForecast data");
+
+            return BadRequest();
+        }
     }
-  }
 }

@@ -39,8 +39,9 @@ public class WeatherFileAccessor: WeatherAccessorBase
 
       return Encoding.UTF8.GetString(content);
     }
-    catch (Exception)
+    catch (Exception e)
     {
+      // Consider logging the exception or adding additional handling here before rethrowing.
       throw;
     }
   }

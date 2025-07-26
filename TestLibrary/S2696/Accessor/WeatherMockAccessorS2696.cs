@@ -13,7 +13,7 @@ public class WeatherMockAccessor: WeatherAccessorBase
 
   public override Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
-    _callCount++;
+    Interlocked.Increment(ref _callCount);
     var weather = GenerateWeatherData(argument).ToList();
 
     if (!weather.Any())

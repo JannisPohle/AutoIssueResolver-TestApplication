@@ -30,7 +30,7 @@ public class WeatherFileAccessor: WeatherAccessorBase
     await using var fs = new FileStream(filePath, FileMode.Open);
     var content = new byte[fs.Length];
     var bytesRead = 0;
-    for (;bytesRead < fs.Length;)
+    while (bytesRead < fs.Length)
     {
       bytesRead += await fs.ReadAsync(content, bytesRead, content.Length - bytesRead);
     }

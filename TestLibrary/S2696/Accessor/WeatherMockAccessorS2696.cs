@@ -5,7 +5,7 @@ namespace TestLibrary.S2696.Accessor;
 
 public class WeatherMockAccessor: WeatherAccessorBase
 {
-  private static int _callCount = 0;
+  private int _callCount = 0;
 
   public WeatherMockAccessor(ILogger<WeatherMockAccessor> logger)
     : base(logger)

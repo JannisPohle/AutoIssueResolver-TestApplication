@@ -78,7 +78,7 @@ public class WeatherOrchestrator: IWeatherOrchestrator
     var data = await _mockAccessor.GetWeather(argument);
     foreach (var weatherData in data)
     {
-      var success = _mockAccessor.ValidateWeatherData(weatherData);
+      var success = _mockAccessor.ValidateWeatherDataBase(weatherData);
 
       if (!success)
       {

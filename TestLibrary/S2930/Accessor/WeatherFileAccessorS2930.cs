@@ -1,3 +1,4 @@
+using System.IO;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
@@ -5,7 +6,7 @@ using TestLibrary.S2930.Models;
 
 namespace TestLibrary.S2930.Accessor;
 
-public class WeatherFileAccessor: WeatherAccessorBase
+public class WeatherFileAccessor: WeatherAccessorBase, IDisposable
 {
   public WeatherFileAccessor(ILogger<WeatherFileAccessor> logger)
     : base(logger)
@@ -15,7 +16,7 @@ public class WeatherFileAccessor: WeatherAccessorBase
   public override async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
     var stringContent = await ReadFromFile(argument ?? "TestFiles/WeatherForecast.json");
-    var weather = JsonSerializer.Deserialize<IEnumerable<WeatherModelCelsius>>(stringContent, JsonSerializerOptions.Web)?.ToList();
+    var weather = JsonSerializer.Deserialize<IEnumerable<WeatherModelCelsius>>(stringContent, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })?.ToList();
 
     if (weather == null)
     {
@@ -27,14 +28,14 @@ public class WeatherFileAccessor: WeatherAccessorBase
 
   private static async Task<string> ReadFromFile(string filePath)
   {
-    var fs = new FileStream(filePath, FileMode.Open);
+    using FileStream fs = File.Open(filePath, FileMode.Open);
     var content = new byte[fs.Length];
-    var bytesRead = 0;
-    while (bytesRead < fs.Length)
-    {
-      bytesRead += await fs.ReadAsync(content, bytesRead, content.Length - bytesRead);
-    }
-
+    await fs.ReadAsync(content, 0, content.Length);
     return Encoding.UTF8.GetString(content);
+  }
+
+  public void Dispose()
+  {
+    // Implement any cleanup logic if necessary
   }
 }

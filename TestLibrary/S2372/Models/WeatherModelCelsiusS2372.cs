@@ -8,15 +8,7 @@ public class WeatherModelCelsius: WeatherModelBase
 
   public int Temperature
   {
-    get
-    {
-      if (_temperature == null || _temperature < -273 || _temperature > 100)
-      {
-        throw new ArgumentException("Temperature must not be null and be between -273°C and 100°C.");
-      }
-
-      return _temperature.Value;
-    }
+    get => ValidateAndGetTemperature();
   }
 
   public override string Unit => "Celsius";
@@ -25,5 +17,15 @@ public class WeatherModelCelsius: WeatherModelBase
   public WeatherModelCelsius(int temperature)
   {
     _temperature = temperature;
+  }
+
+  private int ValidateAndGetTemperature()
+  {
+    if (_temperature == null || _temperature < -273 || _temperature > 100)
+    {
+      throw new ArgumentException("Temperature must not be null and be between -273°C and 100°C.");
+    }
+
+    return _temperature.Value;
   }
 }

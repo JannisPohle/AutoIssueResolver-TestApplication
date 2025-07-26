@@ -8,6 +8,11 @@ public abstract class WeatherModelBase
 
   protected WeatherModelBase()
   {
+    InitializeUnit();
+  }
+
+  private void InitializeUnit()
+  {
     SetUnit();
   }
 

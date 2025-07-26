@@ -22,7 +22,7 @@ public class WeatherOrchestrator: IWeatherOrchestrator
     _logger = logger;
   }
 
-
+  
   public async Task<Result<List<WeatherModelCelsius>>> GetWeather(AccessMode mode, string? argument = null)
   {
     try
@@ -33,8 +33,8 @@ public class WeatherOrchestrator: IWeatherOrchestrator
       }
 
       _logger.LogInformation("Getting weather from {AccessMode} with Argument: {Argument}", mode, argument);
-
-
+      
+      
       var result = mode switch
       {
         AccessMode.File => await _fileAccessor.GetWeather(argument),
@@ -50,7 +50,7 @@ public class WeatherOrchestrator: IWeatherOrchestrator
     }
     catch (Exception e)
     {
-      _logger.LogError("Error retrieving weather data");
+      _logger.LogError(e, "Error retrieving weather data");
 
       return Result<List<WeatherModelCelsius>>.Failure(e);
     }

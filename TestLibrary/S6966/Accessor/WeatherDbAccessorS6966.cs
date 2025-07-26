@@ -2,6 +2,7 @@ using System.Data;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
 using TestLibrary.S6966.Models;
+using System.Threading;
 
 namespace TestLibrary.S6966.Accessor;
 
@@ -86,7 +87,7 @@ public sealed class WeatherDbAccessor: WeatherAccessorBase, IDisposable
 
     await using var reader = await cmd.ExecuteReaderAsync();
 
-    while (reader.Read())
+    while (await reader.ReadAsync(CancellationToken.None))
     {
       var temperature = reader.GetInt32(0);
       weatherList.Add(new WeatherModelCelsius(temperature));

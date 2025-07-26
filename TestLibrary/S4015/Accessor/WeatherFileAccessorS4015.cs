@@ -14,7 +14,7 @@ public class WeatherFileAccessor: WeatherAccessorBase
   /// <inheritdoc />
   public override async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
-    ValidateArgument(argument);
+    ValidateFileArgument(argument);
 
     var stringContent = await ReadFromFile(argument ?? "TestFiles/WeatherForecast.json");
     var weather = JsonSerializer.Deserialize<IEnumerable<WeatherModelCelsius>>(stringContent, JsonSerializerOptions.Web)?.ToList();
@@ -40,7 +40,7 @@ public class WeatherFileAccessor: WeatherAccessorBase
     return Encoding.UTF8.GetString(content);
   }
 
-  private static void ValidateArgument(string? argument)
+  private static void ValidateFileArgument(string? argument)
   {
     if (argument == null)
     {

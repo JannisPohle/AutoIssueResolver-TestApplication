@@ -63,46 +63,4 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
       {
         Logger.LogWarning("No weather data found for with arguments: {Query}", queryUrl);
 
-        throw new DataNotFoundException($"No weather data found for arguments: {queryUrl}.");
-      }
-
-      var weatherData = new List<WeatherModelCelsius>();
-
-      await foreach (var weatherModel in response)
-      {
-        weatherData.Add(new WeatherModelCelsius((int) (weatherModel?.Temperature ?? 0)));
-      }
-
-      Logger.LogInformation("Found {WeatherDataCount} weather data for arguments: {Query}.", weatherData.Count, queryUrl);
-
-      return weatherData;
-    }
-    catch (Exception e)
-    {
-      Logger.LogWarning(e, "Failed to get weather data with arguments:  {Location}, {StartTime}, {EndTime}, {Longitude}, {Latitude}, {Unit}", location, startTime, endTime, longitude, latitude, unit);
-
-      throw new ConnectionFailedException($"Failed to connect to the weather API with arguments: {location}, {startTime}, {endTime}, {longitude}, {latitude}, {unit}.", e);
-    }
-  }
-
-  public override async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
-  {
-    return await GetWeather(argument, null, null, null, null, null);
-  }
-
-  private void Dispose(bool disposing)
-  {
-    if (disposing)
-    {
-      _httpClient.Dispose();
-    }
-  }
-
-  public void Dispose()
-  {
-    Dispose(true);
-    GC.SuppressFinalize(this);
-  }
-
-  #endregion
-}
+        throw new DataNotFoundException($

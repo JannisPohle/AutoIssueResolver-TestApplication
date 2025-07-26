@@ -1,8 +1,1 @@
-namespace TestLibrary.S4019.Models;
-
-public abstract class WeatherModelBase
-{
-  public DateOnly Date { get; } = DateOnly.FromDateTime(DateTime.UtcNow);
-
-  public abstract string Unit { get; }
-}
+// WeatherMockAccessor class is not correctly overridden ValidateWeatherData method

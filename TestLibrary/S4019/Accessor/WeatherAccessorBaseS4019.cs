@@ -24,7 +24,7 @@ public abstract class WeatherAccessorBase
 
   public abstract Task<List<WeatherModelCelsius>> GetWeather(string? argument);
 
-  public bool ValidateWeatherData(WeatherModelCelsius data)
+  public virtual bool ValidateWeatherData(WeatherModelCelsius data)
   {
     var success = data.Temperature is > -30 and < 120;
     Logger.LogTrace("Validate weather data : {Success}", success);

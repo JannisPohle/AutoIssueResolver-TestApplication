@@ -69,23 +69,7 @@ public class WeatherOrchestrator: IWeatherOrchestrator
             throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
           }
 
-          foreach (var weather in result)
-          {
-            if (weather.Temperature > 120)
-            {
-              throw new ValidationException("Temperature cannot exceed 120 degrees Celsius");
-            }
-
-            if (weather.Temperature < -100)
-            {
-              throw new ValidationException("Temperature cannot be below -100 degrees Celsius");
-            }
-
-            if (string.IsNullOrWhiteSpace(weather.Unit))
-            {
-              throw new ValidationException("Unit cannot be null or empty");
-            }
-          }
+          ValidateWeatherData(result);
 
           _logger.LogInformation("Retrieved {Count} weather records", result.Count);
 
@@ -109,6 +93,27 @@ public class WeatherOrchestrator: IWeatherOrchestrator
     }
 
     return finalResult;
+  }
+
+  private void ValidateWeatherData(List<WeatherModelCelsius> weatherData)
+  {
+    foreach (var weather in weatherData)
+    {
+      if (weather.Temperature > 120)
+      {
+        throw new ValidationException("Temperature cannot exceed 120 degrees Celsius");
+      }
+
+      if (weather.Temperature < -100)
+      {
+        throw new ValidationException("Temperature cannot be below -100 degrees Celsius");
+      }
+
+      if (string.IsNullOrWhiteSpace(weather.Unit))
+      {
+        throw new ValidationException("Unit cannot be null or empty");
+      }
+    }
   }
 
   #endregion

@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 namespace TestLibrary.S2365.Models.External;
 
 public class WeatherApiModelResult
@@ -10,19 +8,22 @@ public class WeatherApiModelResult
 
   #endregion
 
-  #region Properties
-
-  //Ensure that the list cannot be modified, by creating a copy of the list
-  public List<WeatherApiModel> Items => _items?.ToList() ?? [];
-
-  #endregion
-
   #region Constructors
 
   [JsonConstructor]
   public WeatherApiModelResult(List<WeatherApiModel>? items)
   {
     _items = items;
+  }
+
+  #endregion
+
+  #region Properties
+
+  // Ensure that the list cannot be modified, by providing a method instead of a property.
+  public IEnumerable<WeatherApiModel> GetItems()
+  {
+    return _items ?? Enumerable.Empty<WeatherApiModel>();
   }
 
   #endregion

@@ -1,61 +1,54 @@
-using Microsoft.Extensions.Logging;
-using TestLibrary.S2681.Abstractions;
-using TestLibrary.S2681.Accessor;
 using TestLibrary.S2681.Models;
 
-namespace TestLibrary.S2681;
+namespace TestLibrary.S2681.Accessor;
 
-public class WeatherOrchestrator: IWeatherOrchestrator
+public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): WeatherAccessorBase(logger), IDisposable
 {
-  private readonly WeatherApiAccessor _apiAccessor;
-  private readonly WeatherDbAccessor _dbAccessor;
-  private readonly WeatherMockAccessor _mockAccessor;
-  private readonly WeatherFileAccessor _fileAccessor;
-  private readonly ILogger<WeatherOrchestrator> _logger;
+  #region Members
 
-  public WeatherOrchestrator(WeatherFileAccessor fileAccessor, WeatherDbAccessor dbAccessor, WeatherApiAccessor apiAccessor, WeatherMockAccessor mockAccessor, ILogger<WeatherOrchestrator> logger)
-  {
-    _fileAccessor = fileAccessor;
-    _dbAccessor = dbAccessor;
-    _apiAccessor = apiAccessor;
-    _mockAccessor = mockAccessor;
-    _logger = logger;
-  }
+  private readonly HttpClient _httpClient = new();
 
+  #endregion
 
-  public async Task<Result<List<WeatherModelCelsius>>> GetWeather(AccessMode mode, string? argument = null)
+  #region Methods
+
+  public override async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
     try
     {
-      if (mode == AccessMode.None) _logger.LogWarning("Access mode is not specified"); return Result<List<WeatherModelCelsius>>.Failure(new ArgumentException("Access mode must be specified", nameof(mode)));
+      var url = "http://localhost:31246/v1/api/weather";
 
-      _logger.LogInformation("Getting weather from {AccessMode} with Argument: {Argument}", mode, argument);
-
-
-      var result = mode switch
+      if (!string.IsNullOrWhiteSpace(argument))
       {
-        AccessMode.File => await _fileAccessor.GetWeather(argument),
-        AccessMode.Mock => await _mockAccessor.GetWeather(argument),
-        AccessMode.Database => await GetWeatherDataFromDbAccessor(argument),
-        AccessMode.Web => await _apiAccessor.GetWeather(argument),
-        _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, null)
-      };
+        url += $"?location={argument}";
+      }
 
-      _logger.LogInformation("Retrieved {Count} weather records", result.Count);
+      var response = _httpClient.GetFromJsonAsAsyncEnumerable<Models.External.WeatherApiModel>(url);
 
-      return Result<List<WeatherModelCelsius>>.Success(result);
+      if (response is null)
+      {
+        Logger.LogWarning("No weather data found for argument: {Argument}", argument);
+
+        throw new DataNotFoundException($"No weather data found for argument: {argument}.");
+      }
+
+      var weatherData = new List<WeatherModelCelsius>();
+
+      await foreach (var weatherModel in response)
+      {
+        weatherData.Add(new WeatherModelCelsius((int) weatherModel.Temperature));
+      }
+
+      Logger.LogInformation("Found {WeatherDataCount} weather data for location {Argument}.", weatherData.Count, argument);
+
+      return weatherData;
     }
     catch (Exception e)
     {
-      _logger.LogError(e, "Error retrieving weather data");
-
-      return Result<List<WeatherModelCelsius>>.Failure(e);
+      _logger.LogError(e, "Error retrieving weather data from API");
+      throw; // rethrow the exception to be caught by calling method
     }
   }
 
-  private async Task<List<WeatherModelCelsius>> GetWeatherDataFromDbAccessor(string? argument)
-  {
-    await _dbAccessor.OpenConnection(argument);
-    return await _dbAccessor.GetWeather(argument);
-  }
+  #endregion
 }

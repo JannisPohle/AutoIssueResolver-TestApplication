@@ -27,8 +27,7 @@ public class WeatherOrchestrator: IWeatherOrchestrator
   {
     try
     {
-      var validationResult = mode == AccessMode.None ? Result<List<WeatherModelCelsius>>.Failure(new ArgumentException("Access mode must be specified", nameof(mode)))
-                             : !Enum.IsDefined(typeof(AccessMode), mode) ? Result<List<WeatherModelCelsius>>.Failure( new ArgumentOutOfRangeException(nameof(mode), mode, null)) : null;
+      var validationResult = ValidateAccessMode(mode);
       if (validationResult != null)
       {
         return validationResult;
@@ -55,6 +54,19 @@ public class WeatherOrchestrator: IWeatherOrchestrator
 
       return Result<List<WeatherModelCelsius>>.Failure(e);
     }
+  }
+
+  private static Result<List<WeatherModelCelsius>>? ValidateAccessMode(AccessMode mode)
+  {
+    if (mode == AccessMode.None)
+    {
+      return Result<List<WeatherModelCelsius>>.Failure(new ArgumentException("Access mode must be specified", nameof(mode)));
+    }
+    if (!Enum.IsDefined(typeof(AccessMode), mode))
+    {
+      return Result<List<WeatherModelCelsius>>.Failure(new ArgumentOutOfRangeException(nameof(mode), mode, null));
+    }
+    return null;
   }
 
   private async Task<List<WeatherModelCelsius>> GetWeatherDataFromDbAccessor(string? argument)

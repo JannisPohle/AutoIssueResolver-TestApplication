@@ -5,7 +5,7 @@ using TestLibrary.S4015.Models;
 
 namespace TestLibrary.S4015.Accessor;
 
-public class WeatherFileAccessor: WeatherAccessorBase
+public sealed class WeatherFileAccessor: WeatherAccessorBase
 {
   public WeatherFileAccessor(ILogger<WeatherFileAccessor> logger)
     : base(logger)
@@ -40,7 +40,7 @@ public class WeatherFileAccessor: WeatherAccessorBase
     return Encoding.UTF8.GetString(content);
   }
 
-  private static void ValidateArgument(string? argument)
+  protected static void ValidateArgument(string? argument)
   {
     if (argument == null)
     {

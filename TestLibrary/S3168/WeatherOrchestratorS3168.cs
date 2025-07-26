@@ -58,7 +58,7 @@ public class WeatherOrchestrator: IWeatherOrchestrator
 
   private async Task<List<WeatherModelCelsius>> GetWeatherDataFromDbAccessor(string? argument)
   {
-    _dbAccessor.OpenConnection(argument);
+    await _dbAccessor.OpenConnection(argument);
     return await _dbAccessor.GetWeather(argument);
   }
 }

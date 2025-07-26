@@ -12,10 +12,6 @@ public class WeatherModelCelsius: WeatherModelBase
   public WeatherModelCelsius(int temperature)
   {
     Temperature = temperature;
-  }
-
-  protected override void SetUnit()
-  {
     Unit = "Celsius";
   }
 }

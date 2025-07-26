@@ -1,22 +1,17 @@
-using System.Text;
-using System.Text.Json;
-using Microsoft.Extensions.Logging;
-using TestLibrary.S4015.Models;
-
-namespace TestLibrary.S4015.Accessor;
-
 public class WeatherFileAccessor: WeatherAccessorBase
 {
   public WeatherFileAccessor(ILogger<WeatherFileAccessor> logger)
     : base(logger)
-  { }
+  {
+
+  }
 
   /// <inheritdoc />
   public override async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
     ValidateArgument(argument);
 
-    var stringContent = await ReadFromFile(argument ?? "TestFiles/WeatherForecast.json");
+    var stringContent = await ReadFromFile(argument ?? "TestFiles/WeatherForecast.json") ;
     var weather = JsonSerializer.Deserialize<IEnumerable<WeatherModelCelsius>>(stringContent, JsonSerializerOptions.Web)?.ToList();
 
     if (weather == null)
@@ -38,23 +33,5 @@ public class WeatherFileAccessor: WeatherAccessorBase
     }
 
     return Encoding.UTF8.GetString(content);
-  }
-
-  private static void ValidateArgument(string? argument)
-  {
-    if (argument == null)
-    {
-      return;
-    }
-
-    if (argument.Trim().Length == 0)
-    {
-      throw new ArgumentException("Argument cannot be an empty string.", nameof(argument));
-    }
-
-    if (argument.Length > 200)
-    {
-      throw new ArgumentException("Argument cannot exceed 100 characters.", nameof(argument));
-    }
   }
 }

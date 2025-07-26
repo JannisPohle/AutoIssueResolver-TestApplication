@@ -1,40 +1,36 @@
-using System.Text;
-using System.Text.Json;
-using Microsoft.Extensions.Logging;
-using TestLibrary.S6966.Models;
-
-namespace TestLibrary.S6966.Accessor;
-
 public class WeatherFileAccessor: WeatherAccessorBase
 {
   public WeatherFileAccessor(ILogger<WeatherFileAccessor> logger)
     : base(logger)
   { }
 
-  /// <inheritdoc />
   public override async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
-    var stringContent = await ReadFromFile(argument ?? "TestFiles/WeatherForecast.json");
-    var weather = JsonSerializer.Deserialize<IEnumerable<WeatherModelCelsius>>(stringContent, JsonSerializerOptions.Web)?.ToList();
-
-    if (weather == null)
+    var filePath = argument ?? "defaultFilePath.json";
+    
+    try
     {
-      throw new InvalidOperationException("Failed to deserialize weather data.");
-    }
+      var json = await ReadFromFile(filePath);
+      var weatherData = JsonSerializer.Deserialize<IEnumerable<WeatherModelCelsius>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })?.ToList();
 
-    return weather;
+      if (weatherData == null)
+      {
+        throw new DataNotFoundException("Failed to deserialize weather data.");
+      }
+
+      return await Task.FromResult(weatherData);
+    }
+    catch (Exception e)
+    {
+      throw new InvalidOperationException($"Error reading from file: {filePath}", e);
+    }
   }
 
   private static async Task<string> ReadFromFile(string filePath)
   {
-    await using var fs = new FileStream(filePath, FileMode.Open);
-    var content = new byte[fs.Length];
-    var bytesRead = 0;
-    while (bytesRead < fs.Length)
-    {
-      bytesRead += await fs.ReadAsync(content, bytesRead, content.Length - bytesRead);
-    }
-
-    return Encoding.UTF8.GetString(content);
+    using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 4096, useAsync: true);
+    using var sr = new StreamReader(fs);
+    
+    return await sr.ReadToEndAsync();
   }
 }

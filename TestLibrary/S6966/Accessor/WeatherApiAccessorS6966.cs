@@ -1,10 +1,3 @@
-using System.Net.Http.Json;
-using Microsoft.Extensions.Logging;
-using TestLibrary.S6966.Models;
-using TestLibrary.S6966.Models.External;
-
-namespace TestLibrary.S6966.Accessor;
-
 public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): WeatherAccessorBase(logger), IDisposable
 {
   #region Members
@@ -30,42 +23,15 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
 
       if (response is null)
       {
-        Logger.LogWarning("No weather data found for argument: {Argument}", argument);
-
-        throw new DataNotFoundException($"No weather data found for argument: {argument}.");
+        throw new InvalidOperationException("Failed to fetch data from the API.");
       }
 
-      var weatherData = new List<WeatherModelCelsius>();
-
-      await foreach (var weatherModel in response)
-      {
-        weatherData.Add(new WeatherModelCelsius((int) weatherModel.Temperature));
-      }
-
-      Logger.LogInformation("Found {WeatherDataCount} weather data for location {Argument}.", weatherData.Count, argument);
-
-      return weatherData;
+      return await response.Select(x => new WeatherModelCelsius((int)x.Temperature)).ToListAsync();
     }
     catch (Exception e)
     {
-      Logger.LogWarning(e, "Failed to get weather data with argument: {Argument}", argument);
-
-      throw new ConnectionFailedException($"Failed to connect to the weather API with argument: {argument}.", e);
+      throw new ConnectionFailedException("Error fetching weather data from web service", e);
     }
-  }
-
-  private void Dispose(bool disposing)
-  {
-    if (disposing)
-    {
-      _httpClient.Dispose();
-    }
-  }
-
-  public void Dispose()
-  {
-    Dispose(true);
-    GC.SuppressFinalize(this);
   }
 
   #endregion

@@ -1,64 +1,52 @@
-using Microsoft.Extensions.Logging;
-using TestLibrary.S6966.Abstractions;
-using TestLibrary.S6966.Accessor;
-using TestLibrary.S6966.Models;
-
-namespace TestLibrary.S6966;
-
 public class WeatherOrchestrator: IWeatherOrchestrator
 {
-  private readonly WeatherApiAccessor _apiAccessor;
-  private readonly WeatherDbAccessor _dbAccessor;
-  private readonly WeatherMockAccessor _mockAccessor;
-  private readonly WeatherFileAccessor _fileAccessor;
   private readonly ILogger<WeatherOrchestrator> _logger;
+  private readonly Dictionary<AccessMode, Func<string?, Task<List<WeatherModelCelsius>>>> _accessors;
 
-  public WeatherOrchestrator(WeatherFileAccessor fileAccessor, WeatherDbAccessor dbAccessor, WeatherApiAccessor apiAccessor, WeatherMockAccessor mockAccessor, ILogger<WeatherOrchestrator> logger)
+  public WeatherOrchestrator(
+    WeatherFileAccessor fileAccessor,
+    WeatherDbAccessor dbAccessor,
+    WeatherApiAccessor apiAccessor,
+    WeatherMockAccessor mockAccessor,
+    ILogger<WeatherOrchestrator> logger)
   {
-    _fileAccessor = fileAccessor;
-    _dbAccessor = dbAccessor;
-    _apiAccessor = apiAccessor;
-    _mockAccessor = mockAccessor;
-    _logger = logger;
-  }
+    _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
+    _accessors = new Dictionary<AccessMode, Func<string?, Task<List<WeatherModelCelsius>>>>
+    {
+      { AccessMode.File, fileAccessor.GetWeather },
+      { AccessMode.Mock, mockAccessor.GetWeather },
+      { AccessMode.Database, async (arg) => await dbAccessor.OpenConnection(arg).ConfigureAwait(false); return await dbAccessor.GetWeather(arg).ConfigureAwait(false); },
+      { AccessMode.Web, apiAccessor.GetWeather }
+    };
+  }
 
   public async Task<Result<List<WeatherModelCelsius>>> GetWeather(AccessMode mode, string? argument = null)
   {
+    _logger.LogInformation("Attempting to get weather data via {AccessMode} with Argument: {Argument}", mode, argument);
+    
+    if (mode == AccessMode.None)
+    {
+      return Result<List<WeatherModelCelsius>>.Failure(new ArgumentException("Access mode must be specified", nameof(mode)));
+    }
+
+    Func<string?, Task<List<WeatherModelCelsius>>> accessor;
+    
+    if (!_accessors.TryGetValue(mode, out accessor))
+    {
+      throw new ArgumentOutOfRangeException(nameof(mode), $"Unknown access mode: {mode}");
+    }
+
     try
     {
-      if (mode == AccessMode.None)
-      {
-        return Result<List<WeatherModelCelsius>>.Failure(new ArgumentException("Access mode must be specified", nameof(mode)));
-      }
-
-      _logger.LogInformation("Getting weather from {AccessMode} with Argument: {Argument}", mode, argument);
-
-
-      var result = mode switch
-      {
-        AccessMode.File => await _fileAccessor.GetWeather(argument),
-        AccessMode.Mock => await _mockAccessor.GetWeather(argument),
-        AccessMode.Database => await GetWeatherDataFromDbAccessor(argument),
-        AccessMode.Web => await _apiAccessor.GetWeather(argument),
-        _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, null)
-      };
-
+      var result = await accessor(argument).ConfigureAwait(false);
       _logger.LogInformation("Retrieved {Count} weather records", result.Count);
-
       return Result<List<WeatherModelCelsius>>.Success(result);
     }
     catch (Exception e)
     {
-      _logger.LogError(e, "Error retrieving weather data");
-
+      _logger.LogError(e, "Error retrieving weather data via {AccessMode}", mode);
       return Result<List<WeatherModelCelsius>>.Failure(e);
     }
-  }
-
-  private async Task<List<WeatherModelCelsius>> GetWeatherDataFromDbAccessor(string? argument)
-  {
-    await _dbAccessor.OpenConnection(argument);
-    return await _dbAccessor.GetWeather(argument);
   }
 }

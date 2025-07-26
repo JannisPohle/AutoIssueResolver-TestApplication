@@ -1,15 +1,10 @@
-using Microsoft.Extensions.Logging;
-using TestLibrary.S6966.Models;
-
-namespace TestLibrary.S6966.Accessor;
-
 public class WeatherMockAccessor: WeatherAccessorBase
 {
   public WeatherMockAccessor(ILogger<WeatherMockAccessor> logger)
     : base(logger)
   { }
 
-  public override Task<List<WeatherModelCelsius>> GetWeather(string? argument)
+  public override async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
     var weather = GenerateWeatherData(argument);
 
@@ -18,7 +13,7 @@ public class WeatherMockAccessor: WeatherAccessorBase
       throw new DataNotFoundException("No weather data available.");
     }
 
-    return Task.FromResult(weather.ToList());
+    return await Task.FromResult(weather.ToList());
   }
 
   private static IEnumerable<WeatherModelCelsius> GenerateWeatherData(string? argument)

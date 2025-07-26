@@ -5,14 +5,13 @@ using TestLibrary.S110.Models;
 
 namespace TestLibrary.S110.Accessor;
 
-public class WeatherFileAccessor: WeatherAccessorBase
+public class WeatherFileAccessor: LoggerBase
 {
   public WeatherFileAccessor(ILogger<WeatherFileAccessor> logger)
     : base(logger)
   { }
 
-  /// <inheritdoc />
-  public override async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
+  public async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
     var filePath = argument ?? "TestFiles/WeatherForecast.json";
     if (!File.Exists(filePath))
@@ -21,7 +20,7 @@ public class WeatherFileAccessor: WeatherAccessorBase
       throw new FileNotFoundException($"Weather data file not found: {filePath}");
     }
 
-    var stringContent = await ReadFromFile(argument ?? "TestFiles/WeatherForecast.json");
+    var stringContent = await ReadFromFile(filePath);
     var weather = JsonSerializer.Deserialize<IEnumerable<WeatherModelCelsius>>(stringContent, JsonSerializerOptions.Web)?.ToList();
 
     if (weather == null)

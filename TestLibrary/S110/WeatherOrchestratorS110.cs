@@ -5,19 +5,21 @@ using TestLibrary.S110.Models;
 
 namespace TestLibrary.S110;
 
-public class WeatherOrchestrator: LoggerBase, IWeatherOrchestrator
+public class WeatherOrchestrator: IWeatherOrchestrator
 {
   private readonly WeatherApiAccessor _apiAccessor;
   private readonly WeatherDbAccessor _dbAccessor;
   private readonly WeatherMockAccessor _mockAccessor;
   private readonly WeatherFileAccessor _fileAccessor;
+  private readonly ILogger _logger;
 
-  public WeatherOrchestrator(WeatherFileAccessor fileAccessor, WeatherDbAccessor dbAccessor, WeatherApiAccessor apiAccessor, WeatherMockAccessor mockAccessor, ILogger<WeatherOrchestrator> logger): base(logger)
+  public WeatherOrchestrator(WeatherFileAccessor fileAccessor, WeatherDbAccessor dbAccessor, WeatherApiAccessor apiAccessor, WeatherMockAccessor mockAccessor, ILogger<WeatherOrchestrator> logger)
   {
     _fileAccessor = fileAccessor;
     _dbAccessor = dbAccessor;
     _apiAccessor = apiAccessor;
     _mockAccessor = mockAccessor;
+    _logger = logger;
   }
 
 
@@ -30,7 +32,7 @@ public class WeatherOrchestrator: LoggerBase, IWeatherOrchestrator
         return Result<List<WeatherModelCelsius>>.Failure(new ArgumentException("Access mode must be specified", nameof(mode)));
       }
 
-      Logger.LogInformation("Getting weather from {AccessMode} with Argument: {Argument}", mode, argument);
+      _logger.LogInformation("Getting weather from {AccessMode} with Argument: {Argument}", mode, argument);
 
 
       var result = mode switch
@@ -42,13 +44,13 @@ public class WeatherOrchestrator: LoggerBase, IWeatherOrchestrator
         _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, null)
       };
 
-      Logger.LogInformation("Retrieved {Count} weather records", result.Count);
+      _logger.LogInformation("Retrieved {Count} weather records", result.Count);
 
       return Result<List<WeatherModelCelsius>>.Success(result);
     }
     catch (Exception e)
     {
-      Logger.LogError(e, "Error retrieving weather data");
+      _logger.LogError(e, "Error retrieving weather data");
 
       return Result<List<WeatherModelCelsius>>.Failure(e);
     }

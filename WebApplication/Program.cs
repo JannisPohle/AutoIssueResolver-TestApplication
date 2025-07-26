@@ -1,1 +1,1 @@
-    _services.AddSingleton<AccessMode, AccessMode>(AccessMode.File);
+AccessMode.File

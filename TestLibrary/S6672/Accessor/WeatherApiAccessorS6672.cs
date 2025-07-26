@@ -14,7 +14,7 @@ public sealed class WeatherApiAccessor: WeatherAccessorBase, IDisposable
 
   #region Constructors
 
-  public WeatherApiAccessor(ILogger<WeatherAccessorBase> logger)
+  public WeatherApiAccessor(ILogger<WeatherApiAccessor> logger)
     : base(logger)
   { }
 

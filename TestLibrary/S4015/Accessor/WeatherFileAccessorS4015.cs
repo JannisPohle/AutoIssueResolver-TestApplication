@@ -40,7 +40,7 @@ public class WeatherFileAccessor: WeatherAccessorBase
     return Encoding.UTF8.GetString(content);
   }
 
-  private static void ValidateArgument(string? argument)
+  public static void ValidateArgument(string? argument)
   {
     if (argument == null)
     {

@@ -32,47 +32,4 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
       {
         Logger.LogWarning("No weather data found for argument: {Argument}", argument);
 
-        throw new DataNotFoundException($"No weather data found for argument: {argument}.");
-      }
-
-      var weatherData = new List<WeatherModelCelsius>();
-
-      var index = 0;
-
-      Start:
-      if (response.Count > index)
-      {
-        weatherData.Add(new WeatherModelCelsius((int) response[index].Temperature));
-        index++;
-
-        goto Start;
-      }
-
-      Logger.LogInformation("Found {WeatherDataCount} weather data for location {Argument}.", weatherData.Count, argument);
-
-      return weatherData;
-    }
-    catch (Exception e)
-    {
-      Logger.LogWarning(e, "Failed to get weather data with argument: {Argument}", argument);
-
-      throw new ConnectionFailedException($"Failed to connect to the weather API with argument: {argument}.", e);
-    }
-  }
-
-  private void Dispose(bool disposing)
-  {
-    if (disposing)
-    {
-      _httpClient.Dispose();
-    }
-  }
-
-  public void Dispose()
-  {
-    Dispose(true);
-    GC.SuppressFinalize(this);
-  }
-
-  #endregion
-}
+        throw new DataNotFoundException($

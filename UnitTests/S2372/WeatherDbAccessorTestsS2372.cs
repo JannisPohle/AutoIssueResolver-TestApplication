@@ -18,7 +18,7 @@ public partial class WeatherOrchestratorTests
     result.Should().NotBeNull();
     result.IsSuccess.Should().BeTrue();
     result.Payload.Should().NotBeNullOrEmpty().And.HaveCount(10);
-    result.Payload.Should().OnlyContain(x => x.Temperature >= 18 && x.Temperature <= 23 && x.Temperature != 0);
+    result.Payload.Should().OnlyContain(x => x.GetTemperature() >= 18 && x.GetTemperature() <= 23 && x.GetTemperature() != 0);
     result.Payload.Should().AllSatisfy(weather => weather.Unit.Should().Be("Celsius"));
   }
 

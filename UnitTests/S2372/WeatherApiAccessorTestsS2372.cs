@@ -26,7 +26,7 @@ public sealed partial class WeatherOrchestratorTests
     result.Should().NotBeNull();
     result.IsSuccess.Should().BeTrue();
     result.Payload.Should().NotBeNullOrEmpty().And.HaveCount(3);
-    result.Payload.Should().Satisfy(w => w.Temperature == 20, w => w.Temperature == 17, w => w.Temperature == 11);
+    result.Payload.Should().Satisfy(w => w.GetTemperature() == 20, w => w.GetTemperature() == 17, w => w.GetTemperature() == 11);
 
     _wireMockServer!.Should().HaveReceivedACall().AtUrl("http://localhost:31246/v1/api/weather").And.UsingGet();
   }
@@ -61,7 +61,7 @@ public sealed partial class WeatherOrchestratorTests
     result.Should().NotBeNull();
     result.IsSuccess.Should().BeTrue();
     result.Payload.Should().NotBeNullOrEmpty().And.HaveCount(1);
-    result.Payload.Should().Satisfy(w => w.Temperature == 11);
+    result.Payload.Should().Satisfy(w => w.GetTemperature() == 11);
 
     _wireMockServer!.Should().HaveReceivedACall().AtUrl("http://localhost:31246/v1/api/weather?location=Berlin").And.UsingGet();
   }

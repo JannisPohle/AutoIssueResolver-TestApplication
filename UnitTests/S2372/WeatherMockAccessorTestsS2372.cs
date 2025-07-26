@@ -16,7 +16,7 @@ public partial class WeatherOrchestratorTests
     result.Should().NotBeNull();
     result.IsSuccess.Should().BeTrue();
     result.Payload.Should().NotBeNullOrEmpty().And.HaveCount(10);
-    result.Payload.Should().OnlyContain(x => x.Temperature >= -20 && x.Temperature <= 50);
+    result.Payload.Should().OnlyContain(x => x.GetTemperature() >= -20 && x.GetTemperature() <= 50);
     result.Payload.Should().NotBeEquivalentTo((await _weatherOrchestrator.GetWeather(AccessMode.Mock)).Payload);
     result.Payload.Should().AllSatisfy(weather => weather.Unit.Should().Be("Celsius"));
   }
@@ -31,7 +31,7 @@ public partial class WeatherOrchestratorTests
     result.Should().NotBeNull();
     result.IsSuccess.Should().BeTrue();
     result.Payload.Should().NotBeNullOrEmpty().And.HaveCount(10);
-    result.Payload.Should().OnlyContain(x => x.Temperature >= -20 && x.Temperature <= 50);
+    result.Payload.Should().OnlyContain(x => x.GetTemperature() >= -20 && x.GetTemperature() <= 50);
     result.Payload.Should().BeEquivalentTo((await _weatherOrchestrator.GetWeather(AccessMode.Mock, "asdf")).Payload);
     result.Payload.Should().AllSatisfy(weather => weather.Unit.Should().Be("Celsius"));
   }
@@ -46,7 +46,7 @@ public partial class WeatherOrchestratorTests
     result.Should().NotBeNull();
     result.IsSuccess.Should().BeTrue();
     result.Payload.Should().NotBeNullOrEmpty().And.HaveCount(5);
-    result.Payload.Should().OnlyContain(x => x.Temperature >= -20 && x.Temperature <= 50);
+    result.Payload.Should().OnlyContain(x => x.GetTemperature() >= -20 && x.GetTemperature() <= 50);
     result.Payload.Should().BeEquivalentTo((await _weatherOrchestrator.GetWeather(AccessMode.Mock, "5")).Payload);
     result.Payload.Should().AllSatisfy(weather => weather.Unit.Should().Be("Celsius"));
   }

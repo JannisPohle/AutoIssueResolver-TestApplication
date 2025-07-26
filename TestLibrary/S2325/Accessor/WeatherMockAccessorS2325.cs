@@ -1,38 +1,36 @@
 using Microsoft.Extensions.Logging;
-using TestLibrary.S2325.Models;
 
 namespace TestLibrary.S2325.Accessor;
 
-public class WeatherMockAccessor: WeatherAccessorBase
+public class WeatherMockAccessor : WeatherAccessorBase
 {
-  public WeatherMockAccessor(ILogger<WeatherMockAccessor> logger)
-    : base(logger)
-  { }
+    public WeatherMockAccessor(ILogger<WeatherMockAccessor> logger)
+        : base(logger) { }
 
-  public override Task<List<WeatherModelCelsius>> GetWeather(string? argument)
-  {
-    var weather = GenerateWeatherData(argument);
-
-    if (!weather.Any())
+    public override Task<List<WeatherModelCelsius>> GetWeather(string? argument)
     {
-      throw new DataNotFoundException("No weather data available.");
+        var weather = GenerateWeatherData(argument);
+
+        if (!weather.Any())
+        {
+            throw new DataNotFoundException("No weather data available.");
+        }
+
+        return Task.FromResult(weather.ToList());
     }
 
-    return Task.FromResult(weather.ToList());
-  }
-
-  private IEnumerable<WeatherModelCelsius> GenerateWeatherData(string? argument)
-  {
-    var random = string.IsNullOrWhiteSpace(argument) ? new Random() : new Random(argument?.GetHashCode() ?? 0);
-
-    if (!int.TryParse(argument, out var count))
+    private static IEnumerable<WeatherModelCelsius> GenerateWeatherData(string? argument)
     {
-      count = 10; // Default count if parsing fails
-    }
+        var random = string.IsNullOrWhiteSpace(argument) ? new Random() : new Random(argument?.GetHashCode() ?? 0);
 
-    for (var i = 0; i < count; i++)
-    {
-      yield return new WeatherModelCelsius(random.Next(-20, 45));
+        if (!int.TryParse(argument, out var count))
+        {
+            count = 10; // Default count if parsing fails
+        }
+
+        for (var i = 0; i < count; i++)
+        {
+            yield return new WeatherModelCelsius(random.Next(-20, 45));
+        }
     }
-  }
 }

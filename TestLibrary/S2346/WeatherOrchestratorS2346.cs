@@ -27,7 +27,7 @@ public class WeatherOrchestrator: IWeatherOrchestrator
   {
     try
     {
-      if (mode == AccessModes.Nothing)
+      if (mode == AccessModes.None)
       {
         return Result<List<WeatherModelCelsius>>.Failure(new ArgumentException("Access mode must be specified", nameof(mode)));
       }

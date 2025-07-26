@@ -1,3 +1,5 @@
+namespace TestLibrary.S3903.Models
+{
 public class WeatherApiModel
 {
   #region Properties
@@ -9,4 +11,5 @@ public class WeatherApiModel
   public string Condition { get; set; } = string.Empty;
 
   #endregion
+}
 }

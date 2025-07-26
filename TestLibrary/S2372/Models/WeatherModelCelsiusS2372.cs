@@ -1,8 +1,5 @@
-using System.Text.Json.Serialization;
-
-namespace TestLibrary.S2372.Models;
-
-public class WeatherModelCelsius: WeatherModelBase
+// New code block
+public class WeatherModelCelsius : WeatherModelBase
 {
   private readonly int? _temperature;
 
@@ -27,3 +24,4 @@ public class WeatherModelCelsius: WeatherModelBase
     _temperature = temperature;
   }
 }
+// End of new code block

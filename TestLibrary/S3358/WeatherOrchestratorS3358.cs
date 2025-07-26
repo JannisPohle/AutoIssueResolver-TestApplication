@@ -36,18 +36,35 @@ public class WeatherOrchestrator: IWeatherOrchestrator
 
       _logger.LogInformation("Getting weather from {AccessMode} with Argument: {Argument}", mode, argument);
 
-      var result = mode switch
+      if (mode == AccessMode.File)
       {
-        AccessMode.File => await _fileAccessor.GetWeather(argument),
-        AccessMode.Mock => await _mockAccessor.GetWeather(argument),
-        AccessMode.Database => await GetWeatherDataFromDbAccessor(argument),
-        AccessMode.Web => await _apiAccessor.GetWeather(argument),
-        _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, null)
-      };
+        var result = await _fileAccessor.GetWeather(argument);
+        _logger.LogInformation("Retrieved {Count} weather records", result.Count);
+        return Result<List<WeatherModelCelsius>>.Success(result);
+      }
 
-      _logger.LogInformation("Retrieved {Count} weather records", result.Count);
+      if (mode == AccessMode.Mock)
+      {
+        var result = await _mockAccessor.GetWeather(argument);
+        _logger.LogInformation("Retrieved {Count} weather records", result.Count);
+        return Result<List<WeatherModelCelsius>>.Success(result);
+      }
 
-      return Result<List<WeatherModelCelsius>>.Success(result);
+      if (mode == AccessMode.Database)
+      {
+        var result = await GetWeatherDataFromDbAccessor(argument);
+        _logger.LogInformation("Retrieved {Count} weather records", result.Count);
+        return Result<List<WeatherModelCelsius>>.Success(result);
+      }
+
+      if (mode == AccessMode.Web)
+      {
+        var result = await _apiAccessor.GetWeather(argument);
+        _logger.LogInformation("Retrieved {Count} weather records", result.Count);
+        return Result<List<WeatherModelCelsius>>.Success(result);
+      }
+
+      throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
     }
     catch (Exception e)
     {

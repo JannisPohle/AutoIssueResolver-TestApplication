@@ -4,17 +4,17 @@ namespace TestLibrary.S1699.Models;
 
 public class WeatherModelCelsius: WeatherModelBase
 {
-  public int Temperature { get; }
+  public int Temperature { get; } 
 
-  public override string Unit { get; protected set; }
+  public override string Unit { get; protected set; } 
 
   [JsonConstructor]
-  public WeatherModelCelsius(int temperature)
+  public WeatherModelCelsius(int temperature) 
   {
     Temperature = temperature;
   }
 
-  protected override void SetUnit()
+  protected override void SetUnit() 
   {
     Unit = "Celsius";
   }

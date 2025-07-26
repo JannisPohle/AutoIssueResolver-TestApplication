@@ -7,20 +7,20 @@ public abstract class WeatherAccessorBase
 {
   #region Properties
 
-  protected ILogger<WeatherAccessorBase> Logger { get; }
+  protected ILogger<WeatherAccessorBase> Logger { get; } 
 
   #endregion
 
   #region Constructors
 
-  protected WeatherAccessorBase(ILogger<WeatherAccessorBase> logger)
+  protected WeatherAccessorBase(ILogger<WeatherAccessorBase> logger) 
   {
     Logger = logger ?? throw new ArgumentNullException(nameof(logger));
   }
 
   #endregion
 
-  #region Methods
+#region Methods
 
   public abstract Task<List<WeatherModelCelsius>> GetWeather(string? argument);
 

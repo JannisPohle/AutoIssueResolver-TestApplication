@@ -8,10 +8,12 @@ namespace WebApplication.Controllers.S6962;
 public class S6962Controller: ControllerBase
 {
   private readonly ILogger<S6962Controller> _logger;
+  private readonly IHttpClientFactory _clientFactory;
 
-  public S6962Controller(ILogger<S6962Controller> logger)
+  public S6962Controller(ILogger<S6962Controller> logger, IHttpClientFactory clientFactory)
   {
     _logger = logger;
+    _clientFactory = clientFactory;
   }
 
   [HttpGet("external")]
@@ -21,10 +23,8 @@ public class S6962Controller: ControllerBase
     {
       _logger.LogTrace("Get WeatherForecast");
 
-      using var httpClient = new HttpClient
-      {
-        BaseAddress = new Uri("http://localhost:31246/api/"),
-      };
+      var httpClient = _clientFactory.CreateClient();
+      httpClient.BaseAddress = new Uri("http://localhost:31246/api/");
 
       var result = await httpClient.GetFromJsonAsync<List<WeatherModelCelsius>>("weather" + (string.IsNullOrWhiteSpace(argument) ? null : $"?location={argument}"));
 

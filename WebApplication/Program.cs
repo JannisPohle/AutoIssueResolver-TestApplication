@@ -13,7 +13,8 @@ builder.Services.AddControllers();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi()
-       .AddLogging(loggingBuilder => loggingBuilder.AddConsole().AddDebug());
+       .AddLogging(loggingBuilder => loggingBuilder.AddConsole().AddDebug())
+       .AddHttpClient(); // Added HttpClient configuration
 
 builder.Services.AddTransient<IWeatherOrchestrator, WeatherOrchestrator>()
        .AddTransient<WeatherMockAccessor>()

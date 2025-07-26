@@ -1,5 +1,3 @@
-namespace TestLibrary.S3903.Models.External;
-
 public class WeatherApiModel
 {
   #region Properties

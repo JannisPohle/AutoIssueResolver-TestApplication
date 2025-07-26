@@ -1,16 +1,5 @@
-using Microsoft.Extensions.Logging;
-using TestLibrary.S3427.Models;
-
-namespace TestLibrary.S3427.Accessor;
-
-public class WeatherDbAccessor: WeatherAccessorBase
+public static class MyClass
 {
-  public WeatherDbAccessor(ILogger<WeatherDbAccessor> logger)
-    : base(logger)
-  { }
-
-  public override Task<List<WeatherModelCelsius>> GetWeather(string? argument)
-  {
-    throw new NotImplementedException();
-  }
+  public static void Print(int number) { }
+  public static void PrintWithDelimiter(int number, string delimiter = "\n") { }
 }

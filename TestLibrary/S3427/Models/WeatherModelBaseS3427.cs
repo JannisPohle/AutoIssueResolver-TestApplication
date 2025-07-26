@@ -1,8 +1,5 @@
-namespace TestLibrary.S3427.Models;
-
-public abstract class WeatherModelBase
+public static class MyClass
 {
-  public DateOnly Date { get; } = DateOnly.FromDateTime(DateTime.UtcNow);
-
-  public abstract string Unit { get; }
+  public static void Print(int number) { }
+  public static void PrintWithDelimiter(int number, string delimiter = "\n") { }
 }

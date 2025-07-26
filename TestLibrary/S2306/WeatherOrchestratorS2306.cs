@@ -8,7 +8,7 @@ namespace TestLibrary.S2306;
 public class WeatherOrchestrator: IWeatherOrchestrator
 {
   private readonly WeatherApiAccessor _apiAccessor;
-  private readonly WeatherDbAccessor async;
+  private readonly WeatherDbAccessor _dbAccessor;
   private readonly WeatherMockAccessor _mockAccessor;
   private readonly WeatherFileAccessor _fileAccessor;
   private readonly ILogger<WeatherOrchestrator> _logger;
@@ -16,12 +16,11 @@ public class WeatherOrchestrator: IWeatherOrchestrator
   public WeatherOrchestrator(WeatherFileAccessor fileAccessor, WeatherDbAccessor weatherDbAccessor, WeatherApiAccessor apiAccessor, WeatherMockAccessor mockAccessor, ILogger<WeatherOrchestrator> logger)
   {
     _fileAccessor = fileAccessor;
-    async = weatherDbAccessor;
+    _dbAccessor = weatherDbAccessor;
     _apiAccessor = apiAccessor;
     _mockAccessor = mockAccessor;
     _logger = logger;
   }
-
 
   public async Task<Result<List<WeatherModelCelsius>>> GetWeather(AccessMode mode, string? argument = null)
   {
@@ -34,12 +33,11 @@ public class WeatherOrchestrator: IWeatherOrchestrator
 
       _logger.LogInformation("Getting weather from {AccessMode} with Argument: {Argument}", mode, argument);
 
-
       var result = mode switch
       {
         AccessMode.File => await _fileAccessor.GetWeather(argument),
         AccessMode.Mock => await _mockAccessor.GetWeather(argument),
-        AccessMode.Database => await async.GetWeather(argument),
+        AccessMode.Database => await _dbAccessor.GetWeather(argument),
         AccessMode.Web => await _apiAccessor.GetWeather(argument),
         _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, null)
       };

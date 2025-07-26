@@ -86,7 +86,7 @@ public sealed class WeatherDbAccessor: WeatherAccessorBase, IDisposable
 
     await using var reader = await cmd.ExecuteReaderAsync();
 
-    while (reader.Read())
+    while (await reader.ReadAsync())
     {
       var temperature = reader.GetInt32(0);
       weatherList.Add(new WeatherModelCelsius(temperature));

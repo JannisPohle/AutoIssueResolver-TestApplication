@@ -33,11 +33,7 @@ public class WeatherMockAccessor: WeatherAccessorBase
     var temperature = 0;
     for (var i = 0; i < count; i++)
     {
-      var next = random.Next(-20, 45);
-      if (next != temperature)
-      {
-        temperature = next;
-      }
+      temperature = random.Next(-20, 45);
       yield return new WeatherModelCelsius(temperature);
     }
   }

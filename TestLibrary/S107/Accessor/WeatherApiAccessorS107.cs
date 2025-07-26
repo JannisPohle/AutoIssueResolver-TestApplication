@@ -4,6 +4,8 @@ using TestLibrary.S107.Models;
 
 namespace TestLibrary.S107.Accessor;
 
+public record WeatherApiRequest(string? Location, string? StartTime, string? EndTime, string? Longitude, string? Latitude, string? Unit);
+
 public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): WeatherAccessorBase(logger), IDisposable
 {
   #region Members
@@ -14,41 +16,41 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
 
   #region Methods
 
-  public async Task<List<WeatherModelCelsius>> GetWeather(string? location, string? startTime, string? endTime, string? longitude, string? latitude, string? unit)
+  public async Task<List<WeatherModelCelsius>> GetWeather(WeatherApiRequest request)
   {
     try
     {
       var url = "http://localhost:31246/v1/api/weather";
 
       Dictionary<string, string> queryParams = new();
-      if (!string.IsNullOrWhiteSpace(location))
+      if (!string.IsNullOrWhiteSpace(request.Location))
       {
-        queryParams.Add("location", location);
+        queryParams.Add("location", request.Location);
       }
 
-      if (!string.IsNullOrWhiteSpace(startTime))
+      if (!string.IsNullOrWhiteSpace(request.StartTime))
       {
-        queryParams.Add("startTime", startTime);
+        queryParams.Add("startTime", request.StartTime);
       }
 
-      if (!string.IsNullOrWhiteSpace(endTime))
+      if (!string.IsNullOrWhiteSpace(request.EndTime))
       {
-        queryParams.Add("endTime", endTime);
+        queryParams.Add("endTime", request.EndTime);
       }
 
-      if (!string.IsNullOrWhiteSpace(longitude))
+      if (!string.IsNullOrWhiteSpace(request.Longitude))
       {
-        queryParams.Add("longitude", longitude);
+        queryParams.Add("longitude", request.Longitude);
       }
 
-      if (!string.IsNullOrWhiteSpace(latitude))
+      if (!string.IsNullOrWhiteSpace(request.Latitude))
       {
-        queryParams.Add("latitude", latitude);
+        queryParams.Add("latitude", request.Latitude);
       }
 
-      if (!string.IsNullOrWhiteSpace(unit))
+      if (!string.IsNullOrWhiteSpace(request.Unit))
       {
-        queryParams.Add("unit", unit);
+        queryParams.Add("unit", request.Unit);
       }
 
       var queryUrl = string.Empty;
@@ -79,15 +81,15 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
     }
     catch (Exception e)
     {
-      Logger.LogWarning(e, "Failed to get weather data with arguments:  {Location}, {StartTime}, {EndTime}, {Longitude}, {Latitude}, {Unit}", location, startTime, endTime, longitude, latitude, unit);
+      Logger.LogWarning(e, "Failed to get weather data with arguments:  {Location}, {StartTime}, {EndTime}, {Longitude}, {Latitude}, {Unit}", request.Location, request.StartTime, request.EndTime, request.Longitude, request.Latitude, request.Unit);
 
-      throw new ConnectionFailedException($"Failed to connect to the weather API with arguments: {location}, {startTime}, {endTime}, {longitude}, {latitude}, {unit}.", e);
+      throw new ConnectionFailedException($"Failed to connect to the weather API with arguments: {request.Location}, {request.StartTime}, {request.EndTime}, {request.Longitude}, {request.Latitude}, {request.Unit}.", e);
     }
   }
 
   public override async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
-    return await GetWeather(argument, null, null, null, null, null);
+    return await GetWeather(new WeatherApiRequest(argument, null, null, null, null, null));
   }
 
   private void Dispose(bool disposing)

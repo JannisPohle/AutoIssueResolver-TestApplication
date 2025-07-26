@@ -4,6 +4,8 @@ using TestLibrary.S107.Models;
 
 namespace TestLibrary.S107.Accessor;
 
+public readonly record struct WeatherApiQuery(string? Location, string? StartTime, string? EndTime, string? Longitude, string? Latitude, string? Unit);
+
 public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): WeatherAccessorBase(logger), IDisposable
 {
   #region Members
@@ -14,41 +16,41 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
 
   #region Methods
 
-  public async Task<List<WeatherModelCelsius>> GetWeather(string? location, string? startTime, string? endTime, string? longitude, string? latitude, string? unit)
+  public async Task<List<WeatherModelCelsius>> GetWeather(WeatherApiQuery query)
   {
     try
     {
       var url = "http://localhost:31246/v1/api/weather";
 
       Dictionary<string, string> queryParams = new();
-      if (!string.IsNullOrWhiteSpace(location))
+      if (!string.IsNullOrWhiteSpace(query.Location))
       {
-        queryParams.Add("location", location);
+        queryParams.Add("location", query.Location);
       }
 
-      if (!string.IsNullOrWhiteSpace(startTime))
+      if (!string.IsNullOrWhiteSpace(query.StartTime))
       {
-        queryParams.Add("startTime", startTime);
+        queryParams.Add("startTime", query.StartTime);
       }
 
-      if (!string.IsNullOrWhiteSpace(endTime))
+      if (!string.IsNullOrWhiteSpace(query.EndTime))
       {
-        queryParams.Add("endTime", endTime);
+        queryParams.Add("endTime", query.EndTime);
       }
 
-      if (!string.IsNullOrWhiteSpace(longitude))
+      if (!string.IsNullOrWhiteSpace(query.Longitude))
       {
-        queryParams.Add("longitude", longitude);
+        queryParams.Add("longitude", query.Longitude);
       }
 
-      if (!string.IsNullOrWhiteSpace(latitude))
+      if (!string.IsNullOrWhiteSpace(query.Latitude))
       {
-        queryParams.Add("latitude", latitude);
+        queryParams.Add("latitude", query.Latitude);
       }
 
-      if (!string.IsNullOrWhiteSpace(unit))
+      if (!string.IsNullOrWhiteSpace(query.Unit))
       {
-        queryParams.Add("unit", unit);
+        queryParams.Add("unit", query.Unit);
       }
 
       var queryUrl = string.Empty;
@@ -70,7 +72,7 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
 
       await foreach (var weatherModel in response)
       {
-        weatherData.Add(new WeatherModelCelsius((int) (weatherModel?.Temperature ?? 0)));
+        weatherData.Add(new WeatherModelCelsius((int)(weatherModel?.Temperature ?? 0)));
       }
 
       Logger.LogInformation("Found {WeatherDataCount} weather data for arguments: {Query}.", weatherData.Count, queryUrl);
@@ -79,15 +81,17 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
     }
     catch (Exception e)
     {
-      Logger.LogWarning(e, "Failed to get weather data with arguments:  {Location}, {StartTime}, {EndTime}, {Longitude}, {Latitude}, {Unit}", location, startTime, endTime, longitude, latitude, unit);
+      Logger.LogWarning(e, "Failed to get weather data with arguments:  {Location}, {StartTime}, {EndTime}, {Longitude}, {Latitude}, {Unit}", query.Location, query.StartTime, query.EndTime, query.Longitude, query.Latitude, query.Unit);
 
-      throw new ConnectionFailedException($"Failed to connect to the weather API with arguments: {location}, {startTime}, {endTime}, {longitude}, {latitude}, {unit}.", e);
+      throw new ConnectionFailedException($"Failed to connect to the weather API with arguments: {query.Location}, {query.StartTime}, {query.EndTime}, {query.Longitude}, {query.Latitude}, {query.Unit}.", e);
     }
   }
 
   public override async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
-    return await GetWeather(argument, null, null, null, null, null);
+    var arguments = argument?.Split(';') ?? [];
+    var query = new WeatherApiQuery(arguments.ElementAtOrDefault(0), arguments.ElementAtOrDefault(1), arguments.ElementAtOrDefault(2), arguments.ElementAtOrDefault(3), arguments.ElementAtOrDefault(4), arguments.ElementAtOrDefault(5));
+    return await GetWeather(query);
   }
 
   private void Dispose(bool disposing)

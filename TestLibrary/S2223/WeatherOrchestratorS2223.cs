@@ -63,6 +63,6 @@ public class WeatherOrchestrator: IWeatherOrchestrator
 
   private static void SetUnitInternal(string newUnit)
   {
-    Constants.Unit = newUnit;
+    Constants.SetUnit(newUnit);
   }
 }

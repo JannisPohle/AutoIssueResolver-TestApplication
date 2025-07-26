@@ -1,7 +1,5 @@
-using Microsoft.Extensions.Logging;
 using TestLibrary.S3973.Abstractions;
 using TestLibrary.S3973.Accessor;
-using TestLibrary.S3973.Models;
 
 namespace TestLibrary.S3973;
 
@@ -28,7 +26,7 @@ public class WeatherOrchestrator: IWeatherOrchestrator
     try
     {
       if (mode == AccessMode.None)
-      return Result<List<WeatherModelCelsius>>.Failure(new ArgumentException("Access mode must be specified", nameof(mode)));
+        return Result<List<WeatherModelCelsius>>.Failure(new ArgumentException("Access mode must be specified", nameof(mode)));
 
       _logger.LogInformation("Getting weather from {AccessMode} with Argument: {Argument}", mode, argument);
 

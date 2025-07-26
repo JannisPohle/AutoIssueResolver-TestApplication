@@ -1,28 +1,17 @@
-using Microsoft.Extensions.Logging;
-using TestLibrary.S1199.Models;
+#nullable enable
+#language C#
+namespace TestLibrary.S1199;
 
-namespace TestLibrary.S1199.Accessor;
+using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Dapper; // for database operations if needed, but note that the code uses SqlMapper so we'll keep it as is or adjust accordingly.
+using Newtonsoft.Json;
 
-public abstract class WeatherAccessorBase
+class WeatherAccessorBase
 {
-  #region Properties
-
-  protected ILogger<WeatherAccessorBase> Logger { get; }
-
-  #endregion
-
-  #region Constructors
-
-  protected WeatherAccessorBase(ILogger<WeatherAccessorBase> logger)
-  {
-    Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-  }
-
-  #endregion
-
-  #region Methods
-
-  public abstract Task<List<WeatherModelCelsius>> GetWeather(string? argument);
-
-  #endregion
+    public abstract Task<List<WeatherModelCelsius>> GetWeatherData(string? argument);
 }
+
+generator fixer.sarif --version 1.0.0

@@ -7,13 +7,13 @@ public abstract class WeatherAccessorBase
 {
   #region Properties
 
-  protected ILogger<WeatherAccessorBase> Logger { get; }
+  protected ILogger Logger { get; }
 
   #endregion
 
   #region Constructors
 
-  protected WeatherAccessorBase(ILogger<WeatherAccessorBase> logger)
+  protected WeatherAccessorBase(ILogger logger)
   {
     Logger = logger ?? throw new ArgumentNullException(nameof(logger));
   }

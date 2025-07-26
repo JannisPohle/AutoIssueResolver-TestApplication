@@ -34,10 +34,7 @@ public class WeatherMockAccessor: WeatherAccessorBase
     for (var i = 0; i < count; i++)
     {
       var next = random.Next(-20, 45);
-      if (next != temperature)
-      {
-        temperature = next;
-      }
+      temperature = next;
       yield return new WeatherModelCelsius(temperature);
     }
   }

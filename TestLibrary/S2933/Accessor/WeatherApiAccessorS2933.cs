@@ -9,7 +9,7 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
 {
   #region Members
 
-  private HttpClient _httpClient = new();
+  private readonly HttpClient _httpClient = new();
 
   #endregion
 

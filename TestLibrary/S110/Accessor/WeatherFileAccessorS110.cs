@@ -5,14 +5,17 @@ using TestLibrary.S110.Models;
 
 namespace TestLibrary.S110.Accessor;
 
-public class WeatherFileAccessor: WeatherAccessorBase
+public class WeatherFileAccessor
 {
+  protected ILogger Logger { get; }
+
   public WeatherFileAccessor(ILogger<WeatherFileAccessor> logger)
-    : base(logger)
-  { }
+  {
+    Logger = logger;
+  }
 
   /// <inheritdoc />
-  public override async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
+  public virtual async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
     var filePath = argument ?? "TestFiles/WeatherForecast.json";
     if (!File.Exists(filePath))

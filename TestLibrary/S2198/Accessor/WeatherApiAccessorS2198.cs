@@ -39,7 +39,7 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
 
       await foreach (var weatherModel in response)
       {
-        if (weatherModel.Temperature > double.MaxValue)
+        if (weatherModel.Temperature > float.MaxValue)
         {
           throw new ValidationException("Temperature value is too high.");
         }

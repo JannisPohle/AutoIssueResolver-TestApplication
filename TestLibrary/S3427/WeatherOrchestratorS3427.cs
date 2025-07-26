@@ -22,7 +22,6 @@ public class WeatherOrchestrator: IWeatherOrchestrator
     _logger = logger;
   }
 
-
   public async Task<Result<List<WeatherModelCelsius>>> GetWeather(AccessMode mode, string? argument = null)
   {
     try
@@ -33,7 +32,6 @@ public class WeatherOrchestrator: IWeatherOrchestrator
       }
 
       _logger.LogInformation("Getting weather from {AccessMode} with Argument: {Argument}", mode, argument);
-
 
       var result = mode switch
       {
@@ -56,10 +54,9 @@ public class WeatherOrchestrator: IWeatherOrchestrator
     }
   }
 
-  public async Task<Result<List<WeatherModelCelsius>>> GetWeather(AccessMode mode, string? argument = null, bool throwOnError = false)
+  public async Task<Result<List<WeatherModelCelsius>>> GetWeatherWithErrorHandling(AccessMode mode, string? argument = null, bool throwOnError = false)
   {
     var result = await GetWeather(mode, argument);
-
 
     if (!throwOnError || result.IsSuccess)
     {

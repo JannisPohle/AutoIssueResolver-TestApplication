@@ -12,7 +12,6 @@ public class WeatherOrchestrator: IWeatherOrchestrator
   private readonly WeatherMockAccessor _mockAccessor;
   private readonly WeatherFileAccessor _fileAccessor;
   private readonly ILogger<WeatherOrchestrator> _logger;
-  private List<WeatherModelCelsius> _result = [];
 
   public WeatherOrchestrator(WeatherFileAccessor fileAccessor, WeatherDbAccessor dbAccessor, WeatherApiAccessor apiAccessor, WeatherMockAccessor mockAccessor, ILogger<WeatherOrchestrator> logger)
   {
@@ -36,7 +35,7 @@ public class WeatherOrchestrator: IWeatherOrchestrator
       _logger.LogInformation("Getting weather from {AccessMode} with Argument: {Argument}", mode, argument);
 
 
-      _result = mode switch
+      var result = mode switch
       {
         AccessMode.File => await _fileAccessor.GetWeather(argument),
         AccessMode.Mock => await _mockAccessor.GetWeather(argument),
@@ -45,9 +44,9 @@ public class WeatherOrchestrator: IWeatherOrchestrator
         _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, null)
       };
 
-      _logger.LogInformation("Retrieved {Count} weather records", _result.Count);
+      _logger.LogInformation("Retrieved {Count} weather records", result.Count);
 
-      return Result<List<WeatherModelCelsius>>.Success(_result);
+      return Result<List<WeatherModelCelsius>>.Success(result);
     }
     catch (Exception e)
     {

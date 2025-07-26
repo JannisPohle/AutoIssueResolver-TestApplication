@@ -1,11 +1,4 @@
-using Microsoft.Extensions.Logging;
-using TestLibrary.S6667.Abstractions;
-using TestLibrary.S6667.Accessor;
-using TestLibrary.S6667.Models;
-
-namespace TestLibrary.S6667;
-
-public class WeatherOrchestrator: IWeatherOrchestrator
+public class WeatherOrchestrator : IWeatherOrchestrator
 {
   private readonly WeatherApiAccessor _apiAccessor;
   private readonly WeatherDbAccessor _dbAccessor;
@@ -50,7 +43,7 @@ public class WeatherOrchestrator: IWeatherOrchestrator
     }
     catch (Exception e)
     {
-      _logger.LogError("Error retrieving weather data");
+      _logger.LogError(e, "Error retrieving weather data");
 
       return Result<List<WeatherModelCelsius>>.Failure(e);
     }

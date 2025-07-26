@@ -1,5 +1,4 @@
-namespace TestLibrary.S3265.Models;
-
+[Flags]
 public enum AccessModes
 {
   None = 1,

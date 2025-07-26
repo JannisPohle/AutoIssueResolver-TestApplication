@@ -13,7 +13,6 @@ public class WeatherMockAccessor: WeatherAccessorBase
 
   public override Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
-    _callCount++;
     var weather = GenerateWeatherData(argument).ToList();
 
     if (!weather.Any())
@@ -21,6 +20,7 @@ public class WeatherMockAccessor: WeatherAccessorBase
       throw new DataNotFoundException("No weather data available.");
     }
 
+    _callCount++;
     return Task.FromResult(weather.ToList());
   }
 
@@ -37,7 +37,6 @@ public class WeatherMockAccessor: WeatherAccessorBase
     {
       count = 10; // If an argument is provided, try to parse it as an integer. If not possible, fallback to 10
     }
-
 
     for (var i = 0; i < count; i++)
     {

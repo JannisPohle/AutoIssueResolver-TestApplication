@@ -5,9 +5,11 @@ using TestLibrary.S2931.Models;
 
 namespace TestLibrary.S2931.Accessor;
 
-public class WeatherFileAccessor: WeatherAccessorBase
+public class WeatherFileAccessor: WeatherAccessorBase, IDisposable
 {
   private FileStream? _fileStream; //TODO maybe implement S2931 in the DbAccessor, because the filestream is exaclty the example in Sonarqube
+
+  private bool disposedValue;
 
   public WeatherFileAccessor(ILogger<WeatherFileAccessor> logger)
     : base(logger)
@@ -43,5 +45,23 @@ public class WeatherFileAccessor: WeatherAccessorBase
     }
 
     return Encoding.UTF8.GetString(content);
+  }
+
+  protected virtual void Dispose(bool disposing)
+  {
+    if (!disposedValue)
+    {
+      if (disposing)
+      {
+        _fileStream?.Dispose();
+      }
+      disposedValue = true;
+    }
+  }
+
+  public void Dispose()
+  {
+    Dispose(disposing: true);
+    GC.SuppressFinalize(this);
   }
 }

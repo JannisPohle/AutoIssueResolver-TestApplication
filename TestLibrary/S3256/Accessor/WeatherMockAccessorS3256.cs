@@ -23,7 +23,7 @@ public class WeatherMockAccessor: WeatherAccessorBase
 
   private static IEnumerable<WeatherModelCelsius> GenerateWeatherData(string? argument)
   {
-    var random = string.Empty.Equals(argument) ? new Random() : new Random(argument?.GetHashCode() ?? 0);
+    var random = argument != null && argument.Length == 0 ? new Random() : new Random(argument?.GetHashCode() ?? 0);
 
     if (!int.TryParse(argument, out var count))
     {

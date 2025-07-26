@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using TestLibrary.S1155.Models;
 
@@ -13,7 +14,7 @@ public class WeatherMockAccessor: WeatherAccessorBase
   {
     var weather = GenerateWeatherData(argument);
 
-    if (weather.Count() == 0)
+    if (!weather.Any())
     {
       throw new DataNotFoundException("No weather data available.");
     }

@@ -5,15 +5,14 @@ using TestLibrary.S2931.Models;
 
 namespace TestLibrary.S2931.Accessor;
 
-public class WeatherFileAccessor: WeatherAccessorBase
+public class WeatherFileAccessor: WeatherAccessorBase, IDisposable
 {
-  private FileStream? _fileStream; //TODO maybe implement S2931 in the DbAccessor, because the filestream is exaclty the example in Sonarqube
+  private FileStream? _fileStream;
 
   public WeatherFileAccessor(ILogger<WeatherFileAccessor> logger)
     : base(logger)
   { }
 
-  /// <inheritdoc />
   public override async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
     var stringContent = await ReadFromFile(argument ?? "TestFiles/WeatherForecast.json");
@@ -30,6 +29,11 @@ public class WeatherFileAccessor: WeatherAccessorBase
   public void CloseFile()
   {
     _fileStream?.Close();
+  }
+
+  public void Dispose()
+  {
+    _fileStream?.Dispose();
   }
 
   private async Task<string> ReadFromFile(string filePath)

@@ -1,1 +1,1 @@
-using Microsoft.Extensions.Logging;
+var result = await weatherOrchestrator.GetWeather(AccessMode.Web, "2023-12-15");

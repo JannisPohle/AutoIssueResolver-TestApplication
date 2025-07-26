@@ -1,4 +1,6 @@
 using System.Text.Json.Serialization;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TestLibrary.S2365.Models.External;
 
@@ -12,8 +14,8 @@ public class WeatherApiModelResult
 
   #region Properties
 
-  //Ensure that the list cannot be modified, by creating a copy of the list
-  public List<WeatherApiModel> Items => _items?.ToList() ?? [];
+  // Provide method to get a copy to avoid unexpected performance cost in property
+  public List<WeatherApiModel> GetItems() => _items?.ToList() ?? new List<WeatherApiModel>();
 
   #endregion
 

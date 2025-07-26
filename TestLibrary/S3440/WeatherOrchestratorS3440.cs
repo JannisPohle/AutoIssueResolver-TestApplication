@@ -1,9 +1,5 @@
 using Microsoft.Extensions.Logging;
-using TestLibrary.S3440.Abstractions;
-using TestLibrary.S3440.Accessor;
-using TestLibrary.S3440.Models;
-
-namespace TestLibrary.S3440;
+using TestLibrary.Template.Abstractions;
 
 public class WeatherOrchestrator: IWeatherOrchestrator
 {
@@ -21,7 +17,6 @@ public class WeatherOrchestrator: IWeatherOrchestrator
     _mockAccessor = mockAccessor;
     _logger = logger;
   }
-
 
   public async Task<Result<List<WeatherModelCelsius>>> GetWeather(AccessMode mode, string? argument = null)
   {
@@ -47,17 +42,14 @@ public class WeatherOrchestrator: IWeatherOrchestrator
       _logger.LogInformation("Retrieved {Count} weather records", result.Count);
 
       return Result<List<WeatherModelCelsius>>.Success(result);
-    }
-    catch (Exception e)
-    {
+    } catch (Exception e){
       _logger.LogError(e, "Error retrieving weather data");
 
       return Result<List<WeatherModelCelsius>>.Failure(e);
     }
   }
 
-  private async Task<List<WeatherModelCelsius>> GetWeatherDataFromDbAccessor(string? argument)
-  {
+  private async Task<List<WeatherModelCelsius>> GetWeatherDataFromDbAccessor(string? argument){
     await _dbAccessor.OpenConnection(argument);
     return await _dbAccessor.GetWeather(argument);
   }

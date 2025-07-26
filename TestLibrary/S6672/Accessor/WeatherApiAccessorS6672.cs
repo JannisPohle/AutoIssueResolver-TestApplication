@@ -14,9 +14,34 @@ public sealed class WeatherApiAccessor: WeatherAccessorBase, IDisposable
 
   #region Constructors
 
-  public WeatherApiAccessor(ILogger<WeatherAccessorBase> logger)
-    : base(logger)
+  public WeatherApiAccessor(ILogger<WeatherApiAccessor> logger)
+    : base(new LoggerAdapter(logger))
   { }
+
+  private sealed class LoggerAdapter : ILogger<WeatherAccessorBase>
+  {
+    private readonly ILogger<WeatherApiAccessor> _inner;
+
+    public LoggerAdapter(ILogger<WeatherApiAccessor> inner)
+    {
+      _inner = inner;
+    }
+
+    public IDisposable BeginScope<TState>(TState state)
+    {
+      return _inner.BeginScope(state);
+    }
+
+    public bool IsEnabled(LogLevel logLevel)
+    {
+      return _inner.IsEnabled(logLevel);
+    }
+
+    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+    {
+      _inner.Log(logLevel, eventId, state, exception, formatter);
+    }
+  }
 
   #endregion
 

@@ -39,14 +39,6 @@ public sealed class WeatherDbAccessor: WeatherAccessorBase, IDisposable
     }
   }
 
-  private static void CloseConnection(SqliteConnection? connection)
-  {
-    if (connection != null && connection.State != ConnectionState.Closed)
-    {
-      connection.Close();
-    }
-  }
-
   private void Dispose(bool disposing)
   {
     if (disposing)
@@ -105,6 +97,14 @@ public sealed class WeatherDbAccessor: WeatherAccessorBase, IDisposable
     private const string CONNECTION_STRING = "Data Source=TestFiles/weather.db";
 
     #endregion
+
+    private static void CloseConnection(SqliteConnection? connection)
+    {
+      if (connection != null && connection.State != ConnectionState.Closed)
+      {
+        connection.Close();
+      }
+    }
 
     public async Task<SqliteConnection> InitializeConnection(string? argument)
     {

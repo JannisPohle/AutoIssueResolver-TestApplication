@@ -27,8 +27,8 @@ public class WeatherOrchestrator: IWeatherOrchestrator
   {
     try
     {
-      var acmMode = (ACM)mode;
-      if (acmMode == ACM.None)
+      var acmMode = (AccessMode)mode;
+      if (acmMode == AccessMode.None)
       {
         return Result<List<WeatherModelCelsius>>.Failure(new ArgumentException("Access mode must be specified", nameof(mode)));
       }
@@ -38,10 +38,10 @@ public class WeatherOrchestrator: IWeatherOrchestrator
 
       var result = acmMode switch
       {
-        ACM.File => await _fileAccessor.GetWeather(argument),
-        ACM.Mock => await _mockAccessor.GetWeather(argument),
-        ACM.Database => await GetWeatherDataFromDbAccessor(argument),
-        ACM.Web => await _apiAccessor.GetWeather(argument),
+        AccessMode.File => await _fileAccessor.GetWeather(argument),
+        AccessMode.Mock => await _mockAccessor.GetWeather(argument),
+        AccessMode.Database => await GetWeatherDataFromDbAccessor(argument),
+        AccessMode.Web => await _apiAccessor.GetWeather(argument),
         _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, null)
       };
 

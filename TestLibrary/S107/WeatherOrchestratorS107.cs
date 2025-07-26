@@ -58,13 +58,27 @@ public class WeatherOrchestrator: IWeatherOrchestrator
 
   private async Task<List<WeatherModelCelsius>> GetWeatherFromApi(string? argument)
   {
-    var arguments = argument?.Split(';') ?? [];
-    return await _apiAccessor.GetWeather(arguments.ElementAtOrDefault(0), arguments.ElementAtOrDefault(1), arguments.ElementAtOrDefault(2), arguments.ElementAtOrDefault(3), arguments.ElementAtOrDefault(4), arguments.ElementAtOrDefault(5));
+    var parameters = ParseWeatherRequestParameters(argument);
+    return await _apiAccessor.GetWeather(parameters);
   }
 
   private async Task<List<WeatherModelCelsius>> GetWeatherDataFromDbAccessor(string? argument)
   {
     await _dbAccessor.OpenConnection(argument);
     return await _dbAccessor.GetWeather(argument);
+  }
+  
+  private static WeatherRequestParameters ParseWeatherRequestParameters(string? argument)
+  {
+    var arguments = argument?.Split(';') ?? [];
+    return new WeatherRequestParameters
+    {
+      Location = arguments.ElementAtOrDefault(0),
+      StartTime = arguments.ElementAtOrDefault(1),
+      EndTime = arguments.ElementAtOrDefault(2),
+      Longitude = arguments.ElementAtOrDefault(3),
+      Latitude = arguments.ElementAtOrDefault(4),
+      Unit = arguments.ElementAtOrDefault(5)
+    };
   }
 }

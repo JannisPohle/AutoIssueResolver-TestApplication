@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 using TestLibrary.S6561.Abstractions;
 using TestLibrary.S6561.Accessor;
 using TestLibrary.S6561.Models;
@@ -25,7 +26,7 @@ public class WeatherOrchestrator: IWeatherOrchestrator
 
   public async Task<Result<List<WeatherModelCelsius>>> GetWeather(AccessMode mode, string? argument = null)
   {
-    var start = DateTime.Now;
+    var stopwatch = Stopwatch.StartNew();
     try
     {
       if (mode == AccessMode.None)
@@ -57,7 +58,8 @@ public class WeatherOrchestrator: IWeatherOrchestrator
     }
     finally
     {
-      _logger.LogInformation("Finished getting weather data after {ElapsedMilliseconds} ms", (DateTime.Now - start).TotalMilliseconds);
+      stopwatch.Stop();
+      _logger.LogInformation("Finished getting weather data after {ElapsedMilliseconds} ms", stopwatch.ElapsedMilliseconds);
     }
   }
 

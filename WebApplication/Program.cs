@@ -28,6 +28,8 @@ builder.Services.AddTransient<TestLibrary.S3427.WeatherOrchestrator>()
        .AddTransient<TestLibrary.S3427.Accessor.WeatherApiAccessor>()
        .AddTransient<TestLibrary.S3427.Accessor.WeatherFileAccessor>();
 
+builder.Services.AddHttpClient();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

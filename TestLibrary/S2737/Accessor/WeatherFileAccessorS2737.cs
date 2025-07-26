@@ -25,7 +25,7 @@ public class WeatherFileAccessor: WeatherAccessorBase
     return weather;
   }
 
-  private static async Task<string> ReadFromFile(string filePath)
+  private async Task<string> ReadFromFile(string filePath)
   {
     try
     {
@@ -39,8 +39,9 @@ public class WeatherFileAccessor: WeatherAccessorBase
 
       return Encoding.UTF8.GetString(content);
     }
-    catch (Exception)
+    catch (Exception e)
     {
+      Logger.LogError(e, "Failed to read from file {FilePath}", filePath);
       throw;
     }
   }

@@ -39,9 +39,9 @@ public class WeatherFileAccessor: WeatherAccessorBase
 
       return Encoding.UTF8.GetString(content);
     }
-    catch (Exception)
+    catch (Exception e)
     {
-      throw;
+      throw new InvalidOperationException("Failed to read from file.", e);
     }
   }
 }

@@ -24,7 +24,7 @@ public class WeatherMockAccessor: WeatherAccessorBase
   public bool ValidateWeatherData(WeatherModelBase data)
   {
     var success = !string.IsNullOrEmpty(data.Unit);
-    Logger.LogTrace("Validate weather data : {Success}", success);
+    Logger.LogTrace("Validate weather data base : {Success}", success);
     return success;
   }
 

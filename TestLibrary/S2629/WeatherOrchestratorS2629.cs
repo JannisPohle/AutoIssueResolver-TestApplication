@@ -32,8 +32,7 @@ public class WeatherOrchestrator: IWeatherOrchestrator
         return Result<List<WeatherModelCelsius>>.Failure(new ArgumentException("Access mode must be specified", nameof(mode)));
       }
 
-      _logger.LogInformation($"Getting weather from {mode} with Argument: {argument}");
-
+      _logger.LogInformation("Getting weather from {Mode} with Argument: {Argument}", mode, argument);
 
       var result = mode switch
       {

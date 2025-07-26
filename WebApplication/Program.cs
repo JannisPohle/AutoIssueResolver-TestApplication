@@ -1,1 +1,1 @@
-List<WeatherModelCelsius> weatherData = new List<WeatherModelCelsius>();
+List<WeatherModelCelsius> weatherData = new();

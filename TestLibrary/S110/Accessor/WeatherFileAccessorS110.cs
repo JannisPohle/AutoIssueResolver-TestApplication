@@ -5,19 +5,21 @@ using TestLibrary.S110.Models;
 
 namespace TestLibrary.S110.Accessor;
 
-public class WeatherFileAccessor: WeatherAccessorBase
+public class WeatherFileAccessor
 {
-  public WeatherFileAccessor(ILogger<WeatherFileAccessor> logger)
-    : base(logger)
-  { }
+  private readonly ILogger<WeatherFileAccessor> _logger;
 
-  /// <inheritdoc />
-  public override async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
+  public WeatherFileAccessor(ILogger<WeatherFileAccessor> logger)
+  {
+    _logger = logger;
+  }
+
+  public async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
     var filePath = argument ?? "TestFiles/WeatherForecast.json";
     if (!File.Exists(filePath))
     {
-      Logger.LogWarning("Weather data file not found: {FilePath}", filePath);
+      _logger.LogWarning("Weather data file not found: {FilePath}", filePath);
       throw new FileNotFoundException($"Weather data file not found: {filePath}");
     }
 
@@ -26,7 +28,7 @@ public class WeatherFileAccessor: WeatherAccessorBase
 
     if (weather == null)
     {
-      Logger.LogWarning("Failed to deserialize weather data from file: {FilePath}", argument);
+      _logger.LogWarning("Failed to deserialize weather data from file: {FilePath}", argument);
       throw new InvalidOperationException("Failed to deserialize weather data.");
     }
 

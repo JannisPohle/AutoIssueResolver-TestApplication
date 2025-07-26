@@ -13,7 +13,7 @@ public class WeatherMockAccessor: WeatherAccessorBase
 
   public override Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
-    _callCount++;
+    IncrementCallCount();
     var weather = GenerateWeatherData(argument).ToList();
 
     if (!weather.Any())
@@ -22,6 +22,11 @@ public class WeatherMockAccessor: WeatherAccessorBase
     }
 
     return Task.FromResult(weather.ToList());
+  }
+
+  private static void IncrementCallCount()
+  {
+    _callCount++;
   }
 
   private static IEnumerable<WeatherModelCelsius> GenerateWeatherData(string? argument)

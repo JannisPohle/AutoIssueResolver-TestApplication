@@ -14,41 +14,41 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
 
   #region Methods
 
-  public async Task<List<WeatherModelCelsius>> GetWeather(WeatherQueryParameters parameters)
+  public async Task<List<WeatherModelCelsius>> GetWeather(string? location, string? startTime, string? endTime, string? longitude, string? latitude, string? unit)
   {
     try
     {
       var url = "http://localhost:31246/v1/api/weather";
 
       Dictionary<string, string> queryParams = new();
-      if (!string.IsNullOrWhiteSpace(parameters.Location))
+      if (!string.IsNullOrWhiteSpace(location))
       {
-        queryParams.Add("location", parameters.Location);
+        queryParams.Add("location", location);
       }
 
-      if (!string.IsNullOrWhiteSpace(parameters.StartTime))
+      if (!string.IsNullOrWhiteSpace(startTime))
       {
-        queryParams.Add("startTime", parameters.StartTime);
+        queryParams.Add("startTime", startTime);
       }
 
-      if (!string.IsNullOrWhiteSpace(parameters.EndTime))
+      if (!string.IsNullOrWhiteSpace(endTime))
       {
-        queryParams.Add("endTime", parameters.EndTime);
+        queryParams.Add("endTime", endTime);
       }
 
-      if (!string.IsNullOrWhiteSpace(parameters.Longitude))
+      if (!string.IsNullOrWhiteSpace(longitude))
       {
-        queryParams.Add("longitude", parameters.Longitude);
+        queryParams.Add("longitude", longitude);
       }
 
-      if (!string.IsNullOrWhiteSpace(parameters.Latitude))
+      if (!string.IsNullOrWhiteSpace(latitude))
       {
-        queryParams.Add("latitude", parameters.Latitude);
+        queryParams.Add("latitude", latitude);
       }
 
-      if (!string.IsNullOrWhiteSpace(parameters.Unit))
+      if (!string.IsNullOrWhiteSpace(unit))
       {
-        queryParams.Add("unit", parameters.Unit);
+        queryParams.Add("unit", unit);
       }
 
       var queryUrl = string.Empty;
@@ -79,16 +79,15 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
     }
     catch (Exception e)
     {
-      Logger.LogWarning(e, "Failed to get weather data with arguments:  {Location}, {StartTime}, {EndTime}, {Longitude}, {Latitude}, {Unit}", parameters.Location, parameters.StartTime, parameters.EndTime, parameters.Longitude, parameters.Latitude, parameters.Unit);
+      Logger.LogWarning(e, "Failed to get weather data with arguments:  {Location}, {StartTime}, {EndTime}, {Longitude}, {Latitude}, {Unit}", location, startTime, endTime, longitude, latitude, unit);
 
-      throw new ConnectionFailedException($"Failed to connect to the weather API with arguments: {parameters.Location}, {parameters.StartTime}, {parameters.EndTime}, {parameters.Longitude}, {parameters.Latitude}, {parameters.Unit}.", e);
+      throw new ConnectionFailedException($"Failed to connect to the weather API with arguments: {location}, {startTime}, {endTime}, {longitude}, {latitude}, {unit}.", e);
     }
   }
 
   public override async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
-    var parameters = new WeatherQueryParameters { Location = argument };
-    return await GetWeather(parameters);
+    return await GetWeather(argument, null, null, null, null, null);
   }
 
   private void Dispose(bool disposing)
@@ -106,14 +105,4 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
   }
 
   #endregion
-}
-
-public class WeatherQueryParameters
-{
-  public string? Location { get; set; }
-  public string? StartTime { get; set; }
-  public string? EndTime { get; set; }
-  public string? Longitude { get; set; }
-  public string? Latitude { get; set; }
-  public string? Unit { get; set; }
 }

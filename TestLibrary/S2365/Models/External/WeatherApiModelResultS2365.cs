@@ -12,8 +12,8 @@ public class WeatherApiModelResult
 
   #region Properties
 
-  //Method instead of property to indicate potential performance impact
-  public List<WeatherApiModel> GetItems() => _items?.ToList() ?? [];
+  //Ensure that the list cannot be modified, by creating a copy of the list
+  public List<WeatherApiModel> Items => _items?.ToList() ?? [];
 
   #endregion
 

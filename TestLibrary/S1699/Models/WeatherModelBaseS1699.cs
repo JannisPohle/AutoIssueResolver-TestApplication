@@ -8,8 +8,11 @@ public abstract class WeatherModelBase
 
   protected WeatherModelBase()
   {
-    SetUnit();
+    // SetUnit();
   }
 
-  protected abstract void SetUnit();
+  protected virtual void SetUnit()
+  {
+    // Method implementation can be provided in derived classes
+  }
 }

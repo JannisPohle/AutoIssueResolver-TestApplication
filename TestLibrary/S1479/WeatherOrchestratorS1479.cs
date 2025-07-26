@@ -22,24 +22,6 @@ public class WeatherOrchestrator: IWeatherOrchestrator
     _logger = logger;
   }
 
-  private async Task<List<WeatherModelCelsius>> GetWeatherFromMode(string mode, string? argument)
-  {
-    return mode switch
-    {
-      "File" => await _fileAccessor.GetWeather(argument),
-      "Mock" => await _mockAccessor.GetWeather(argument),
-      "Database" => await GetWeatherFromDatabase(argument),
-      "Web" => await _apiAccessor.GetWeather(argument),
-      _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, null)
-    }.
-    ConfigureAwait(false);
-  }
-
-  private async Task<List<WeatherModelCelsius>> GetWeatherFromDatabase(string? argument)
-  {
-    await _dbAccessor.OpenConnection(argument).ConfigureAwait(false);
-    return await _dbAccessor.GetWeather(argument).ConfigureAwait(false);
-  }
 
   public async Task<Result<List<WeatherModelCelsius>>> GetWeather(string mode, string? argument = null)
   {
@@ -52,7 +34,26 @@ public class WeatherOrchestrator: IWeatherOrchestrator
 
       _logger.LogInformation("Getting weather from {AccessMode} with Argument: {Argument}", mode, argument);
 
-      var result = await GetWeatherFromMode(mode, argument).ConfigureAwait(false);
+
+      var result = new List<WeatherModelCelsius>();
+      switch (mode)
+      {
+        case "File":
+          result.AddRange(await _fileAccessor.GetWeather(argument));
+          break;
+        case "Mock":
+          result.AddRange(await _mockAccessor.GetWeather(argument));
+          break;
+        case "Database":
+          await _dbAccessor.OpenConnection(argument);
+          result.AddRange(await _dbAccessor.GetWeather(argument));
+          break;
+        case "Web":
+          result.AddRange(await _apiAccessor.GetWeather(argument));
+          break;
+        default:
+          throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
+      }
 
       _logger.LogInformation("Retrieved {Count} weather records", result.Count);
 

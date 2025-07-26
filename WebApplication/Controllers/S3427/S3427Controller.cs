@@ -34,7 +34,7 @@ public class S3427Controller: ControllerBase
     {
       _logger.LogTrace("Get WeatherForecast");
 
-      var result = await _weatherOrchestrator.GetWeather(AccessMode.File, argument, throwOnError);
+      var result = await _weatherOrchestrator.GetWeatherWithThrowOption(AccessMode.File, argument, throwOnError);
 
       if (!result.IsSuccess)
       {

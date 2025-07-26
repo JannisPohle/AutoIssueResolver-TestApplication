@@ -1,1 +1,1 @@
-using System.Net;
+List<WeatherModelCelsius> weatherData = new List<WeatherModelCelsius>();

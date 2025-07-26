@@ -15,6 +15,8 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi()
        .AddLogging(loggingBuilder => loggingBuilder.AddConsole().AddDebug());
 
+builder.Services.AddHttpClient();
+
 builder.Services.AddTransient<IWeatherOrchestrator, WeatherOrchestrator>()
        .AddTransient<WeatherMockAccessor>()
        .AddTransient<WeatherDbAccessor>()

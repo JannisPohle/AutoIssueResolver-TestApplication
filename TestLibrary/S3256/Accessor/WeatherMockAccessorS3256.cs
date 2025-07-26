@@ -3,7 +3,7 @@ using TestLibrary.S3256.Models;
 
 namespace TestLibrary.S3256.Accessor;
 
-public class WeatherMockAccessor: WeatherAccessorBase
+public class WeatherMockAccessor : WeatherAccessorBase
 {
   public WeatherMockAccessor(ILogger<WeatherMockAccessor> logger)
     : base(logger)
@@ -23,7 +23,7 @@ public class WeatherMockAccessor: WeatherAccessorBase
 
   private static IEnumerable<WeatherModelCelsius> GenerateWeatherData(string? argument)
   {
-    var random = string.Empty.Equals(argument) ? new Random() : new Random(argument?.GetHashCode() ?? 0);
+    var random = string.IsNullOrEmpty(argument) ? new Random() : new Random(argument?.GetHashCode() ?? 0);
 
     if (!int.TryParse(argument, out var count))
     {

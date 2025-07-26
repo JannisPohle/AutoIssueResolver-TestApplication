@@ -1,15 +1,16 @@
-using System.Text.Json.Serialization;
+using System;
 
-namespace TestLibrary.S3358.Models;
-
-public class WeatherModelCelsius: WeatherModelBase
+namespace TestLibrary.S2629.Models
 {
-  public int Temperature { get; }
-  public override string Unit => "Celsius";
+    public class WeatherModelCelsius : WeatherModelBase
+    {
+        public int Temperature { get; }
+        public override string Unit => "Celsius";
 
-  [JsonConstructor]
-  public WeatherModelCelsius(int temperature)
-  {
-    Temperature = temperature;
-  }
+        [JsonConstructor]
+        public WeatherModelCelsius(int temperature)
+        {
+            Temperature = temperature;
+        }
+    }
 }

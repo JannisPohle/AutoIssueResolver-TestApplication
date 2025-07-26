@@ -1,17 +1,9 @@
-using System.Text;
-using System.Text.Json;
-using Microsoft.Extensions.Logging;
-using TestLibrary.S107.Models;
 
-namespace TestLibrary.S107.Accessor;
-
-public class WeatherFileAccessor: WeatherAccessorBase
+public class WeatherApiAccessor : WeatherAccessorBase
 {
-  public WeatherFileAccessor(ILogger<WeatherFileAccessor> logger)
-    : base(logger)
+  public WeatherApiAccessor(ILogger<WeatherApiAccessor> logger) : base(logger)
   { }
 
-  /// <inheritdoc />
   public override async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
     var stringContent = await ReadFromFile(argument ?? "TestFiles/WeatherForecast.json");

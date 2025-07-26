@@ -1,3 +1,4 @@
+`
 using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
@@ -5,14 +6,9 @@ using TestLibrary.S110.Models;
 
 namespace TestLibrary.S110.Accessor;
 
-public class WeatherFileAccessor: WeatherAccessorBase
+public class WeatherFileAccessor(ILogger<WeatherFileAccessor> logger): LoggerBase(logger)
 {
-  public WeatherFileAccessor(ILogger<WeatherFileAccessor> logger)
-    : base(logger)
-  { }
-
-  /// <inheritdoc />
-  public override async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
+  public Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
     var filePath = argument ?? "TestFiles/WeatherForecast.json";
     if (!File.Exists(filePath))
@@ -21,7 +17,7 @@ public class WeatherFileAccessor: WeatherAccessorBase
       throw new FileNotFoundException($"Weather data file not found: {filePath}");
     }
 
-    var stringContent = await ReadFromFile(argument ?? "TestFiles/WeatherForecast.json");
+    var stringContent = ReadFromFile(argument ?? "TestFiles/WeatherForecast.json");
     var weather = JsonSerializer.Deserialize<IEnumerable<WeatherModelCelsius>>(stringContent, JsonSerializerOptions.Web)?.ToList();
 
     if (weather == null)
@@ -30,19 +26,14 @@ public class WeatherFileAccessor: WeatherAccessorBase
       throw new InvalidOperationException("Failed to deserialize weather data.");
     }
 
-    return weather;
+    return Task.FromResult(weather);
   }
 
-  private static async Task<string> ReadFromFile(string filePath)
+  private static string ReadFromFile(string filePath)
   {
-    await using var fs = new FileStream(filePath, FileMode.Open);
-    var content = new byte[fs.Length];
-    var bytesRead = 0;
-    while (bytesRead < fs.Length)
-    {
-      bytesRead += await fs.ReadAsync(content, bytesRead, content.Length - bytesRead);
-    }
-
-    return Encoding.UTF8.GetString(content);
+    using var fs = new FileStream(filePath, FileMode.Open);
+    using var reader = new StreamReader(fs);
+    return reader.ReadToEnd();
   }
 }
+`

@@ -21,7 +21,7 @@ public class WeatherMockAccessor: WeatherAccessorBase
     return Task.FromResult(weather.ToList());
   }
 
-  public bool ValidateWeatherData(WeatherModelBase data)
+  public bool ValidateWeatherData(WeatherModelCelsius data)
   {
     var success = !string.IsNullOrEmpty(data.Unit);
     Logger.LogTrace("Validate weather data : {Success}", success);

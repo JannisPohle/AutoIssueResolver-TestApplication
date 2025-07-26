@@ -39,17 +39,16 @@ public class WeatherOrchestrator: IWeatherOrchestrator
       switch (mode)
       {
         case "File":
-          result.AddRange(await _fileAccessor.GetWeather(argument));
+          result.AddRange(await GetFileWeather(argument));
           break;
         case "Mock":
-          result.AddRange(await _mockAccessor.GetWeather(argument));
+          result.AddRange(await GetMockWeather(argument));
           break;
         case "Database":
-          await _dbAccessor.OpenConnection(argument);
-          result.AddRange(await _dbAccessor.GetWeather(argument));
+          result.AddRange(await GetDatabaseWeather(argument));
           break;
         case "Web":
-          result.AddRange(await _apiAccessor.GetWeather(argument));
+          result.AddRange(await GetWebWeather(argument));
           break;
         default:
           throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
@@ -65,5 +64,26 @@ public class WeatherOrchestrator: IWeatherOrchestrator
 
       return Result<List<WeatherModelCelsius>>.Failure(e);
     }
+  }
+  
+  private async Task<List<WeatherModelCelsius>> GetFileWeather(string? argument)
+  {
+    return await _fileAccessor.GetWeather(argument);
+  }
+  
+  private async Task<List<WeatherModelCelsius>> GetMockWeather(string? argument)
+  {
+    return await _mockAccessor.GetWeather(argument);
+  }
+  
+  private async Task<List<WeatherModelCelsius>> GetDatabaseWeather(string? argument)
+  {
+    await _dbAccessor.OpenConnection(argument);
+    return await _dbAccessor.GetWeather(argument);
+  }
+  
+  private async Task<List<WeatherModelCelsius>> GetWebWeather(string? argument)
+  {
+    return await _apiAccessor.GetWeather(argument);
   }
 }

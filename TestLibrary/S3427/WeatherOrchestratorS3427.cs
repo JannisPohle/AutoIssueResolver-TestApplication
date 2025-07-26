@@ -56,7 +56,7 @@ public class WeatherOrchestrator: IWeatherOrchestrator
     }
   }
 
-  public async Task<Result<List<WeatherModelCelsius>>> GetWeather(AccessMode mode, string? argument = null, bool throwOnError = false)
+  public async Task<Result<List<WeatherModelCelsius>>> GetWeatherWithThrowOnError(AccessMode mode, string? argument = null, bool throwOnError = false)
   {
     var result = await GetWeather(mode, argument);
 

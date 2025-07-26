@@ -5,7 +5,7 @@ using TestLibrary.S4015.Models;
 
 namespace TestLibrary.S4015.Accessor;
 
-public class WeatherFileAccessor: WeatherAccessorBase
+public sealed class WeatherFileAccessor: WeatherAccessorBase
 {
   public WeatherFileAccessor(ILogger<WeatherFileAccessor> logger)
     : base(logger)

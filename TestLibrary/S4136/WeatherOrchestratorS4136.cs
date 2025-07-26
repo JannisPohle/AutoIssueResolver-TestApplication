@@ -1,11 +1,8 @@
-using Microsoft.Extensions.Logging;
-using TestLibrary.S4136.Abstractions;
-using TestLibrary.S4136.Accessor;
 using TestLibrary.S4136.Models;
 
 namespace TestLibrary.S4136;
 
-public class WeatherOrchestrator: IWeatherOrchestrator
+public class WeatherOrchestrator : IWeatherOrchestrator
 {
   private readonly WeatherApiAccessor _apiAccessor;
   private readonly WeatherDbAccessor _dbAccessor;
@@ -22,7 +19,6 @@ public class WeatherOrchestrator: IWeatherOrchestrator
     _logger = logger;
   }
 
-
   public async Task<Result<List<WeatherModelCelsius>>> GetWeather(AccessMode mode, string? argument = null)
   {
     try
@@ -33,7 +29,6 @@ public class WeatherOrchestrator: IWeatherOrchestrator
       }
 
       _logger.LogInformation("Getting weather from {AccessMode} with Argument: {Argument}", mode, argument);
-
 
       var result = mode switch
       {
@@ -65,7 +60,6 @@ public class WeatherOrchestrator: IWeatherOrchestrator
   public async Task<Result<List<WeatherModelCelsius>>> GetWeather(AccessMode mode, string? argument, bool throwOnError)
   {
     var result = await GetWeather(mode, argument);
-
 
     if (!throwOnError || result.IsSuccess)
     {

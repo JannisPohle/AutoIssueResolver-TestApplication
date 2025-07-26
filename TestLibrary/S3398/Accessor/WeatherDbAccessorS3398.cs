@@ -39,14 +39,6 @@ public sealed class WeatherDbAccessor: WeatherAccessorBase, IDisposable
     }
   }
 
-  private static void CloseConnection(SqliteConnection? connection)
-  {
-    if (connection != null && connection.State != ConnectionState.Closed)
-    {
-      connection.Close();
-    }
-  }
-
   private void Dispose(bool disposing)
   {
     if (disposing)
@@ -83,6 +75,14 @@ public sealed class WeatherDbAccessor: WeatherAccessorBase, IDisposable
 
   private sealed class DatabaseManager: IDisposable, IAsyncDisposable
   {
+    private static void CloseConnection(SqliteConnection? connection)
+    {
+      if (connection != null && connection.State != ConnectionState.Closed)
+      {
+        connection.Close();
+      }
+    }
+
     public void Dispose()
     {
       CloseConnection(_connection);

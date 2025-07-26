@@ -37,15 +37,9 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
 
       var weatherData = new List<WeatherModelCelsius>();
 
-      var index = 0;
-
-      Start:
-      if (response.Count > index)
+      for(var index = 0; index < response.Count; index++)
       {
         weatherData.Add(new WeatherModelCelsius((int) response[index].Temperature));
-        index++;
-
-        goto Start;
       }
 
       Logger.LogInformation("Found {WeatherDataCount} weather data for location {Argument}.", weatherData.Count, argument);

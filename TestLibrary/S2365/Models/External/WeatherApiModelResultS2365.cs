@@ -13,7 +13,7 @@ public class WeatherApiModelResult
   #region Properties
 
   //Ensure that the list cannot be modified, by creating a copy of the list
-  public List<WeatherApiModel> Items => _items?.ToList() ?? [];
+  public IEnumerable<WeatherApiModel> Items => _items ?? [];
 
   #endregion
 

@@ -22,7 +22,6 @@ public class WeatherOrchestrator: IWeatherOrchestrator
     _logger = logger;
   }
 
-
   public async Task<Result<List<WeatherModelCelsius>>> GetWeather(string mode, string? argument = null)
   {
     try
@@ -34,22 +33,20 @@ public class WeatherOrchestrator: IWeatherOrchestrator
 
       _logger.LogInformation("Getting weather from {AccessMode} with Argument: {Argument}", mode, argument);
 
-
       var result = new List<WeatherModelCelsius>();
       switch (mode)
       {
         case "File":
-          result.AddRange(await _fileAccessor.GetWeather(argument));
+          result.AddRange(await HandleFileAccess(argument));
           break;
         case "Mock":
-          result.AddRange(await _mockAccessor.GetWeather(argument));
+          result.AddRange(await HandleMockAccess(argument));
           break;
         case "Database":
-          await _dbAccessor.OpenConnection(argument);
-          result.AddRange(await _dbAccessor.GetWeather(argument));
+          result.AddRange(await HandleDatabaseAccess(argument));
           break;
         case "Web":
-          result.AddRange(await _apiAccessor.GetWeather(argument));
+          result.AddRange(await HandleWebAccess(argument));
           break;
         default:
           throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
@@ -65,5 +62,26 @@ public class WeatherOrchestrator: IWeatherOrchestrator
 
       return Result<List<WeatherModelCelsius>>.Failure(e);
     }
+  }
+
+  private async Task<List<WeatherModelCelsius>> HandleFileAccess(string? argument)
+  {
+    return await _fileAccessor.GetWeather(argument);
+  }
+
+  private async Task<List<WeatherModelCelsius>> HandleMockAccess(string? argument)
+  {
+    return await _mockAccessor.GetWeather(argument);
+  }
+
+  private async Task<List<WeatherModelCelsius>> HandleDatabaseAccess(string? argument)
+  {
+    await _dbAccessor.OpenConnection(argument);
+    return await _dbAccessor.GetWeather(argument);
+  }
+
+  private async Task<List<WeatherModelCelsius>> HandleWebAccess(string? argument)
+  {
+    return await _apiAccessor.GetWeather(argument);
   }
 }

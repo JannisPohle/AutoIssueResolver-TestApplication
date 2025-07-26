@@ -41,7 +41,7 @@ public class WeatherOrchestrator: IWeatherOrchestrator
         AccessMode.Mock => await _mockAccessor.GetWeather(argument),
         AccessMode.Database => await _dbAccessor.GetWeather(argument),
         AccessMode.Web => await _apiAccessor.GetWeather(argument),
-        _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, string.Format("Specified access mode '{0]' is not supported", mode))
+        _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, string.Format("Specified access mode '{0}' is not supported", mode))
       };
 
       _logger.LogInformation("Retrieved {Count} weather records", result.Count);

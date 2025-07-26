@@ -8,7 +8,7 @@ public abstract class WeatherModelBase
 
   protected WeatherModelBase()
   {
-    SetUnit();
+    // Constructor no longer calls overridable method to avoid unexpected behavior
   }
 
   protected abstract void SetUnit();

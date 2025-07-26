@@ -5,7 +5,7 @@ namespace TestLibrary.S2696.Accessor;
 
 public class WeatherMockAccessor: WeatherAccessorBase
 {
-  private static int _callCount = 0;
+  private int _callCount = 0;
 
   public WeatherMockAccessor(ILogger<WeatherMockAccessor> logger)
     : base(logger)
@@ -24,7 +24,7 @@ public class WeatherMockAccessor: WeatherAccessorBase
     return Task.FromResult(weather.ToList());
   }
 
-  private static IEnumerable<WeatherModelCelsius> GenerateWeatherData(string? argument)
+  private IEnumerable<WeatherModelCelsius> GenerateWeatherData(string? argument)
   {
     var random = string.IsNullOrWhiteSpace(argument) ? new Random(_callCount) : new Random(argument?.GetHashCode() ?? 0);
 

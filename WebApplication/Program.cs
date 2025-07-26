@@ -1,5 +1,15 @@
-private readonly WeatherFileAccessor _fileAccessor;
-private readonly WeatherDbAccessor _dbAccessor;
-private readonly WeatherApiAccessor _apiAccessor;
-private readonly WeatherMockAccessor _mockAccessor;
-private readonly ILogger<WeatherOrchestrator> _logger;
+private readonly IServiceCollection _services; 
+
+ public WeatherService(IServiceCollection services) 
+ { 
+ _services = services; 
+ } 
+
+ public async Task InitializeAsync() 
+ { 
+  _services.AddScoped<WeatherOrchestrator, WeatherOrchestrator>(); 
+  _services.AddSingleton<AccessMode, AccessMode>(AccessMode.File); 
+  _services.AddSingleton<ILogger<WeatherOrchestrator>>(_logger); 
+  await _services.BuildServiceProviderAsync(); 
+ } 
+

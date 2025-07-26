@@ -13,18 +13,14 @@ public abstract class LoggerBase
   }
 }
 
-public abstract class WeatherAccessorBase: LoggerBase
+public abstract class WeatherAccessorBase
 {
-  #region Constructors
+  protected ILogger Logger { get; }
 
-  protected WeatherAccessorBase(ILogger<WeatherAccessorBase> logger): base(logger)
-  { }
-
-  #endregion
-
-  #region Methods
+  protected WeatherAccessorBase(ILogger logger)
+  {
+    Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+  }
 
   public abstract Task<List<WeatherModelCelsius>> GetWeather(string? argument);
-
-  #endregion
 }

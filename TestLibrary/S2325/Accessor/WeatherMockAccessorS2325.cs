@@ -9,7 +9,7 @@ public class WeatherMockAccessor: WeatherAccessorBase
     : base(logger)
   { }
 
-  public override Task<List<WeatherModelCelsius>> GetWeather(string? argument)
+  public static Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
     var weather = GenerateWeatherData(argument);
 
@@ -21,7 +21,7 @@ public class WeatherMockAccessor: WeatherAccessorBase
     return Task.FromResult(weather.ToList());
   }
 
-  private IEnumerable<WeatherModelCelsius> GenerateWeatherData(string? argument)
+  private static IEnumerable<WeatherModelCelsius> GenerateWeatherData(string? argument)
   {
     var random = string.IsNullOrWhiteSpace(argument) ? new Random() : new Random(argument?.GetHashCode() ?? 0);
 

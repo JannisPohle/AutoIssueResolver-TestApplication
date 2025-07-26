@@ -36,21 +36,16 @@ public class WeatherOrchestrator: IWeatherOrchestrator
       {
         case AccessMode.File:
           result = await _fileAccessor.GetWeather(argument);
-
           break;
         case AccessMode.Mock:
           result = await _mockAccessor.GetWeather(argument);
-
           break;
         case AccessMode.Database:
           result = await GetWeatherDataFromDbAccessor(argument);
-
           break;
         case AccessMode.Web:
           result = await _apiAccessor.GetWeather(argument);
-
           break;
-        case AccessMode.None:
         default:
           _logger.LogWarning("No valid access mode provided, returning empty list");
           break;

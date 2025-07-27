@@ -10,9 +10,10 @@ public class WeatherApiModelResult
 
   #endregion
 
-  #region Methods
+  #region Properties
 
-  public List<WeatherApiModel> GetItems() => _items?.ToList() ?? [];
+  //Ensure that the list cannot be modified, by creating a copy of the list
+  public List<WeatherApiModel> Items => _items?.ToList() ?? [];
 
   #endregion
 

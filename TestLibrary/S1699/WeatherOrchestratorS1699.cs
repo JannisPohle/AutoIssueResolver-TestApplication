@@ -34,6 +34,7 @@ public class WeatherOrchestrator: IWeatherOrchestrator
 
       _logger.LogInformation("Getting weather from {AccessMode} with Argument: {Argument}", mode, argument);
 
+
       var result = mode switch
       {
         AccessMode.File => await _fileAccessor.GetWeather(argument),

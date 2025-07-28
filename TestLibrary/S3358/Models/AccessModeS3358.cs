@@ -1,13 +1,10 @@
-using System;
+namespace TestLibrary.S3358.Models;
 
-namespace TestLibrary.S2629.Models
+public enum AccessMode
 {
-    public enum AccessMode
-    {
-        None, 
-        File, 
-        Mock, 
-        Database, 
-        Web, 
-    }
+  None,
+  File,
+  Mock,
+  Database,
+  Web,
 }

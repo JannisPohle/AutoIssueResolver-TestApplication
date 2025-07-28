@@ -1,11 +1,8 @@
-using System;
+namespace TestLibrary.S3358.Models;
 
-namespace TestLibrary.S2629.Models
+public abstract class WeatherModelBase
 {
-    public class WeatherModelBase
-    {
-        public DateOnly Date { get; } = DateOnly.FromDateTime(DateTime.UtcNow);
+  public DateOnly Date { get; } = DateOnly.FromDateTime(DateTime.UtcNow);
 
-        public abstract string Unit { get; }
-    }
+  public abstract string Unit { get; }
 }

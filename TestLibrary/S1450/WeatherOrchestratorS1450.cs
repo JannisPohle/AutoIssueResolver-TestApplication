@@ -1,15 +1,18 @@
 using Microsoft.Extensions.Logging;
+using TestLibrary.S1450.Abstractions;
+using TestLibrary.S1450.Accessor;
 using TestLibrary.S1450.Models;
 
 namespace TestLibrary.S1450;
 
-public class WeatherOrchestrator : IWeatherOrchestrator
+public class WeatherOrchestrator: IWeatherOrchestrator
 {
   private readonly WeatherApiAccessor _apiAccessor;
   private readonly WeatherDbAccessor _dbAccessor;
   private readonly WeatherMockAccessor _mockAccessor;
   private readonly WeatherFileAccessor _fileAccessor;
   private readonly ILogger<WeatherOrchestrator> _logger;
+  private List<WeatherModelCelsius> _result = [];
 
   public WeatherOrchestrator(WeatherFileAccessor fileAccessor, WeatherDbAccessor dbAccessor, WeatherApiAccessor apiAccessor, WeatherMockAccessor mockAccessor, ILogger<WeatherOrchestrator> logger)
   {
@@ -19,6 +22,7 @@ public class WeatherOrchestrator : IWeatherOrchestrator
     _mockAccessor = mockAccessor;
     _logger = logger;
   }
+
 
   public async Task<Result<List<WeatherModelCelsius>>> GetWeather(AccessMode mode, string? argument = null)
   {
@@ -31,7 +35,8 @@ public class WeatherOrchestrator : IWeatherOrchestrator
 
       _logger.LogInformation("Getting weather from {AccessMode} with Argument: {Argument}", mode, argument);
 
-      var result = mode switch
+
+      _result = mode switch
       {
         AccessMode.File => await _fileAccessor.GetWeather(argument),
         AccessMode.Mock => await _mockAccessor.GetWeather(argument),
@@ -40,13 +45,14 @@ public class WeatherOrchestrator : IWeatherOrchestrator
         _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, null)
       };
 
-      _logger.LogInformation("Retrieved {Count} weather records", result.Count);
+      _logger.LogInformation("Retrieved {Count} weather records", _result.Count);
 
-      return Result<List<WeatherModelCelsius>>.Success(result);
+      return Result<List<WeatherModelCelsius>>.Success(_result);
     }
     catch (Exception e)
     {
       _logger.LogError(e, "Error retrieving weather data");
+
       return Result<List<WeatherModelCelsius>>.Failure(e);
     }
   }

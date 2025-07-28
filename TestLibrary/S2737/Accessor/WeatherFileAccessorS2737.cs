@@ -39,9 +39,8 @@ public class WeatherFileAccessor: WeatherAccessorBase
 
       return Encoding.UTF8.GetString(content);
     }
-    catch (Exception e) // Noncompliant replaced with compliant code
+    catch (Exception)
     {
-      Logger.LogError(e, "Error reading from file: {FilePath}", filePath);
       throw;
     }
   }

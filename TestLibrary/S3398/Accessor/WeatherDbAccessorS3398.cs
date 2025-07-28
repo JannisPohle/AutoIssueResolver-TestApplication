@@ -39,53 +39,94 @@ public sealed class WeatherDbAccessor: WeatherAccessorBase, IDisposable
     }
   }
 
+  private static void CloseConnection(SqliteConnection? connection)
+  {
+    if (connection != null && connection.State != ConnectionState.Closed)
+    {
+      connection.Close();
+    }
+  }
+
+  private void Dispose(bool disposing)
+  {
+    if (disposing)
+    {
+      _dbManager?.Dispose();
+    }
+  }
+
+  public void Dispose()
+  {
+    Dispose(true);
+    GC.SuppressFinalize(this);
+  }
+
   public override async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
-    await OpenConnection(argument);
-    return await _dbManager.GetWeather(argument);
+    var cmd = _dbManager.CreateCommand();
+
+    var weatherList = new List<WeatherModelCelsius>();
+    cmd.CommandText = "SELECT Temperature FROM Weather";
+
+    await using var reader = await cmd.ExecuteReaderAsync();
+
+    while (await reader.ReadAsync())
+    {
+      var temperature = reader.GetInt32(0);
+      weatherList.Add(new WeatherModelCelsius(temperature));
+    }
+
+    return weatherList;
   }
 
   #endregion
 
-  private class DatabaseManager : IDisposable
+  private sealed class DatabaseManager: IDisposable, IAsyncDisposable
   {
-    public async Task InitializeConnection(string? argument)
-    {
-      // Implementation for initializing connection
-    }
-
-    public async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
-    {
-      // Implementation for getting weather data
-      return new List<WeatherModelCelsius>();
-    }
-
-    #region IDisposable Support
-
-    private bool disposedValue = false;
-
-    protected virtual void Dispose(bool disposing)
-    {
-      if (!disposedValue)
-      {
-        if (disposing)
-        {
-          // TODO: dispose managed state (managed objects).
-        }
-
-        // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-        // TODO: set large fields to null.
-      }
-
-      disposedValue = true;
-    }
-
     public void Dispose()
     {
-      Dispose(true);
-      GC.SuppressFinalize(this);
+      CloseConnection(_connection);
+      _connection?.Dispose();
     }
 
+    public async ValueTask DisposeAsync()
+    {
+      if (_connection != null)
+      {
+        CloseConnection(_connection);
+        await _connection.DisposeAsync();
+      }
+    }
+
+    private SqliteConnection? _connection;
+    
+    #region Static
+
+    private const string CONNECTION_STRING = "Data Source=TestFiles/weather.db";
+
     #endregion
+
+    public async Task<SqliteConnection> InitializeConnection(string? argument)
+    {
+      _connection ??= new SqliteConnection(argument ?? CONNECTION_STRING);
+
+      if (_connection.State != ConnectionState.Open)
+      {
+        await _connection.OpenAsync();
+      }
+
+      return _connection;
+    }
+
+    public SqliteCommand CreateCommand()
+    {
+      if (_connection is null || _connection.State != ConnectionState.Open)
+      {
+        throw new InvalidOperationException("Database connection is not open. Call OpenConnection() before accessing the database.");
+      }
+      var cmd = _connection!.CreateCommand();
+
+      return cmd;
+    }
   }
 }

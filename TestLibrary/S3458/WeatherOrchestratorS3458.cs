@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using TestLibrary.S3458.Abstractions;
 using TestLibrary.S3458.Accessor;
 using TestLibrary.S3458.Models;
@@ -49,14 +50,15 @@ public class WeatherOrchestrator: IWeatherOrchestrator
           result = await _apiAccessor.GetWeather(argument);
 
           break;
+        case AccessMode.None:
         default:
           _logger.LogWarning("No valid access mode provided, returning empty list");
           break;
       }
 
-      _logger.LogInformation("Retrieved {Count} weather records", result?.Count);
+      _logger.LogInformation("Retrieved {Count} weather records", result.Count);
 
-      return Result<List<WeatherModelCelsius>>.Success(result ?? []);
+      return Result<List<WeatherModelCelsius>>.Success(result);
     }
     catch (Exception e)
     {

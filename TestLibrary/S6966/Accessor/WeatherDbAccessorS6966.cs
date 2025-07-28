@@ -1,35 +1,99 @@
-public sealed class WeatherDbAccessor: WeatherAccessorBase
-{
-  private readonly string _connectionString;
+using System.Data;
+using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Logging;
+using TestLibrary.S6966.Models;
 
-  public WeatherDbAccessor(ILogger<WeatherDbAccessor> logger, IConfiguration configuration)
+namespace TestLibrary.S6966.Accessor;
+
+public sealed class WeatherDbAccessor: WeatherAccessorBase, IDisposable
+{
+  #region Static
+
+  private const string CONNECTION_STRING = "Data Source=TestFiles/weather.db";
+
+  #endregion
+
+  #region Members
+
+  private SqliteConnection? _connection;
+
+  #endregion
+
+  #region Constructors
+
+  public WeatherDbAccessor(ILogger<WeatherDbAccessor> logger)
     : base(logger)
   {
-    _connectionString = configuration.GetConnectionString("DefaultConnection");
+    SQLitePCL.Batteries_V2.Init();
+  }
+
+  #endregion
+
+  #region Methods
+
+  public async Task OpenConnection(string? argument)
+  {
+    try
+    {
+      _connection ??= new SqliteConnection(argument ?? CONNECTION_STRING);
+
+      if (_connection.State != ConnectionState.Open)
+      {
+        await _connection.OpenAsync();
+      }
+    }
+    catch (Exception e)
+    {
+      Logger.LogError(e, "Failed to open database connection with argument: {Argument}", argument);
+
+      throw new ConnectionFailedException("Failed to open the database connection. Please check the connection string or database availability.", e);
+    }
+  }
+
+  private void CloseConnection()
+  {
+    if (_connection != null && _connection.State != ConnectionState.Closed)
+    {
+      _connection.Close();
+    }
+  }
+
+  private void Dispose(bool disposing)
+  {
+    if (disposing)
+    {
+      CloseConnection();
+      _connection?.Dispose();
+    }
+  }
+
+  public void Dispose()
+  {
+    Dispose(true);
+    GC.SuppressFinalize(this);
   }
 
   public override async Task<List<WeatherModelCelsius>> GetWeather(string? argument)
   {
-    var records = new List<WeatherModelCelsius>();
-    
-    await using var connection = new SqlConnection(_connectionString);
-    await connection.OpenAsync();
-    
-    var query = "SELECT Temperature FROM WeatherData WHERE Location LIKE @Location";
-    var command = new SqlCommand(query, connection);
-
-    if (!string.IsNullOrEmpty(argument))
+    if (_connection is null || _connection.State != ConnectionState.Open)
     {
-      command.Parameters.AddWithValue("@Location", $"%{argument}%");
+      throw new InvalidOperationException("Database connection is not open. Call OpenConnection() before accessing the database.");
     }
 
-    await using var reader = await command.ExecuteReaderAsync();
-    
-    while (await reader.ReadAsync())
+    var weatherList = new List<WeatherModelCelsius>();
+    var cmd = _connection!.CreateCommand();
+    cmd.CommandText = "SELECT Temperature FROM Weather";
+
+    await using var reader = await cmd.ExecuteReaderAsync();
+
+    while (reader.Read())
     {
-      records.Add(new WeatherModelCelsius((int)reader["Temperature"]));
+      var temperature = reader.GetInt32(0);
+      weatherList.Add(new WeatherModelCelsius(temperature));
     }
 
-    return records;
+    return weatherList;
   }
+
+  #endregion
 }

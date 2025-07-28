@@ -1,5 +1,16 @@
-public static class MyClass
+using Microsoft.Extensions.Logging;
+using TestLibrary.S3427.Models;
+
+namespace TestLibrary.S3427.Accessor;
+
+public class WeatherApiAccessor: WeatherAccessorBase
 {
-  public static void Print(int number) { }
-  public static void PrintWithDelimiter(int number, string delimiter = "\n") { }
+  public WeatherApiAccessor(ILogger<WeatherApiAccessor> logger)
+    : base(logger)
+  { }
+
+  public override Task<List<WeatherModelCelsius>> GetWeather(string? argument)
+  {
+    throw new NotImplementedException();
+  }
 }

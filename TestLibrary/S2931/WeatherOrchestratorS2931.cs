@@ -1,3 +1,10 @@
+using Microsoft.Extensions.Logging;
+using TestLibrary.S2931.Abstractions;
+using TestLibrary.S2931.Accessor;
+using TestLibrary.S2931.Models;
+
+namespace TestLibrary.S2931;
+
 public class WeatherOrchestrator: IWeatherOrchestrator
 {
   private readonly WeatherApiAccessor _apiAccessor;
@@ -40,9 +47,10 @@ public class WeatherOrchestrator: IWeatherOrchestrator
       _logger.LogInformation("Retrieved {Count} weather records", result.Count);
 
       return Result<List<WeatherModelCelsius>>.Success(result);
-    } catch (Exception e) \
+    }
+    catch (Exception e)
     {
-      _logger.LogError(e, "Error retrieving weather data"); \
+      _logger.LogError(e, "Error retrieving weather data");
 
       return Result<List<WeatherModelCelsius>>.Failure(e);
     }

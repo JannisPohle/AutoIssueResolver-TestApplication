@@ -1,9 +1,10 @@
+using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
 using TestLibrary.S6672.Models;
 
 namespace TestLibrary.S6672.Accessor;
 
-public sealed class WeatherApiAccessor : WeatherAccessorBase, IDisposable
+public sealed class WeatherApiAccessor: WeatherAccessorBase, IDisposable
 {
   #region Members
 
@@ -13,8 +14,9 @@ public sealed class WeatherApiAccessor : WeatherAccessorBase, IDisposable
 
   #region Constructors
 
-  public WeatherApiAccessor(ILogger<WeatherApiAccessor> logger)
-    : base(logger) { }
+  public WeatherApiAccessor(ILogger<WeatherAccessorBase> logger)
+    : base(logger)
+  { }
 
   #endregion
 
@@ -35,30 +37,42 @@ public sealed class WeatherApiAccessor : WeatherAccessorBase, IDisposable
 
       if (response is null)
       {
-        Logger.LogWarning("No weather data found for argument: {{Argument}}", argument);
+        Logger.LogWarning("No weather data found for argument: {Argument}", argument);
 
-        throw new DataNotFoundException($"No weather data found for argument: {{argument}}");
+        throw new DataNotFoundException($"No weather data found for argument: {argument}.");
       }
 
-      // Assuming some processing of response happens here to create WeatherModelCelsius list
-      return await ProcessResponse(response);
+      var weatherData = new List<WeatherModelCelsius>();
+
+      await foreach (var weatherModel in response)
+      {
+        weatherData.Add(new WeatherModelCelsius((int) weatherModel.Temperature));
+      }
+
+      Logger.LogInformation("Found {WeatherDataCount} weather data for location {Argument}.", weatherData.Count, argument);
+
+      return weatherData;
     }
-    catch (Exception ex)
+    catch (Exception e)
     {
-      Logger.LogError(ex, "Error retrieving weather data from API.");
-      throw;
+      Logger.LogWarning(e, "Failed to get weather data with argument: {Argument}", argument);
+
+      throw new ConnectionFailedException($"Failed to connect to the weather API with argument: {argument}.", e);
     }
   }
 
-  private async Task<List<WeatherModelCelsius>> ProcessResponse(IAsyncEnumerable<Models.External.WeatherApiModel> response)
+  private void Dispose(bool disposing)
   {
-    var resultList = new List<WeatherModelCelsius>();
-    await foreach (var item in response)
+    if (disposing)
     {
-      // Convert each WeatherApiModel to WeatherModelCelsius
-      resultList.Add(new WeatherModelCelsius((int)item.Temperature));
+      _httpClient.Dispose();
     }
-    return resultList;
+  }
+
+  public void Dispose()
+  {
+    Dispose(true);
+    GC.SuppressFinalize(this);
   }
 
   #endregion

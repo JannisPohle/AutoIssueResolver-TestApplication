@@ -1,8 +1,11 @@
+using Microsoft.Extensions.Logging;
+using TestLibrary.S2629.Abstractions;
+using TestLibrary.S2629.Accessor;
 using TestLibrary.S2629.Models;
 
 namespace TestLibrary.S2629;
 
-public class WeatherOrchestrator : IWeatherOrchestrator
+public class WeatherOrchestrator: IWeatherOrchestrator
 {
   private readonly WeatherApiAccessor _apiAccessor;
   private readonly WeatherDbAccessor _dbAccessor;
@@ -29,8 +32,8 @@ public class WeatherOrchestrator : IWeatherOrchestrator
         return Result<List<WeatherModelCelsius>>.Failure(new ArgumentException("Access mode must be specified", nameof(mode)));
       }
 
-      const string logMessageStart = "Getting weather from {Mode} with Argument: {Argument}";
-      _logger.LogInformation(logMessageStart, mode, argument);
+      _logger.LogInformation($"Getting weather from {mode} with Argument: {argument}");
+
 
       var result = mode switch
       {
@@ -41,8 +44,7 @@ public class WeatherOrchestrator : IWeatherOrchestrator
         _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, null)
       };
 
-      const string logMessageEnd = "Retrieved {Count} weather records";
-      _logger.LogInformation(logMessageEnd, result.Count);
+      _logger.LogInformation("Retrieved {Count} weather records", result.Count);
 
       return Result<List<WeatherModelCelsius>>.Success(result);
     }

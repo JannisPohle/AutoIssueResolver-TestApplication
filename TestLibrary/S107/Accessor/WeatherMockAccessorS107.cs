@@ -1,7 +1,12 @@
+using Microsoft.Extensions.Logging;
+using TestLibrary.S107.Models;
 
-public class WeatherMockAccessor : WeatherAccessorBase
+namespace TestLibrary.S107.Accessor;
+
+public class WeatherMockAccessor: WeatherAccessorBase
 {
-  public WeatherMockAccessor(ILogger<WeatherMockAccessor> logger) : base(logger)
+  public WeatherMockAccessor(ILogger<WeatherMockAccessor> logger)
+    : base(logger)
   { }
 
   public override Task<List<WeatherModelCelsius>> GetWeather(string? argument)

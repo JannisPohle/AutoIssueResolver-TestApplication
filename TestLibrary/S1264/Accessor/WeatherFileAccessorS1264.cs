@@ -1,4 +1,11 @@
-public class WeatherFileAccessor : WeatherAccessorBase
+using System.Text;
+using System.Text.Json;
+using Microsoft.Extensions.Logging;
+using TestLibrary.S1264.Models;
+
+namespace TestLibrary.S1264.Accessor;
+
+public class WeatherFileAccessor: WeatherAccessorBase
 {
   public WeatherFileAccessor(ILogger<WeatherFileAccessor> logger)
     : base(logger)
@@ -22,8 +29,8 @@ public class WeatherFileAccessor : WeatherAccessorBase
   {
     await using var fs = new FileStream(filePath, FileMode.Open);
     var content = new byte[fs.Length];
-    int bytesRead = 0;
-    while (bytesRead < fs.Length)
+    var bytesRead = 0;
+    for (;bytesRead < fs.Length;)
     {
       bytesRead += await fs.ReadAsync(content, bytesRead, content.Length - bytesRead);
     }

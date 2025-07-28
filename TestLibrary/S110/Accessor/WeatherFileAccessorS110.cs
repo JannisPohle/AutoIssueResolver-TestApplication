@@ -1,7 +1,11 @@
+using System.Text;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using TestLibrary.S110.Models;
+
 namespace TestLibrary.S110.Accessor;
 
-public class WeatherFileAccessor : LoggerBase
+public class WeatherFileAccessor: WeatherAccessorBase
 {
   public WeatherFileAccessor(ILogger<WeatherFileAccessor> logger)
     : base(logger)

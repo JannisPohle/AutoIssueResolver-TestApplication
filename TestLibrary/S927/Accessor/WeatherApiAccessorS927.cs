@@ -1,3 +1,10 @@
+using System.Net.Http.Json;
+using Microsoft.Extensions.Logging;
+using TestLibrary.S927.Models;
+using TestLibrary.S927.Models.External;
+
+namespace TestLibrary.S927.Accessor;
+
 public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): WeatherAccessorBase(logger), IDisposable
 {
   #region Members
@@ -23,9 +30,9 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
 
       if (response is null)
       {
-        Logger.LogWarning("No weather data found for argument: {{Argument}}", location);
+        Logger.LogWarning("No weather data found for argument: {Argument}", location);
 
-        throw new DataNotFoundException($"No weather data found for argument: {{location}}.");
+        throw new DataNotFoundException($"No weather data found for argument: {location}.");
       }
 
       var weatherData = new List<WeatherModelCelsius>();
@@ -35,15 +42,15 @@ public sealed class WeatherApiAccessor(ILogger<WeatherApiAccessor> logger): Weat
         weatherData.Add(new WeatherModelCelsius((int) weatherModel.Temperature));
       }
 
-      Logger.LogInformation("Found {{WeatherDataCount}} weather data for location {{Argument}}.", weatherData.Count, location);
+      Logger.LogInformation("Found {WeatherDataCount} weather data for location {Argument}.", weatherData.Count, location);
 
       return weatherData;
     }
     catch (Exception e)
     {
-      Logger.LogWarning(e, "Failed to get weather data with argument: {{Argument}}", location);
+      Logger.LogWarning(e, "Failed to get weather data with argument: {Argument}", location);
 
-      throw new ConnectionFailedException($"Failed to connect to the weather API with argument: {{location}}.", e);
+      throw new ConnectionFailedException($"Failed to connect to the weather API with argument: {location}.", e);
     }
   }
 

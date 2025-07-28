@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using TestLibrary.S2178.Abstractions;
 using TestLibrary.S2178.Accessor;
 using TestLibrary.S2178.Models;
@@ -26,7 +27,7 @@ public class WeatherOrchestrator: IWeatherOrchestrator
   {
     try
     {
-      if ((mode == AccessMode.None) || mode is > AccessMode.Web or < AccessMode.File)
+      if ((mode == AccessMode.None) | mode is > AccessMode.Web or < AccessMode.File)
       {
         return Result<List<WeatherModelCelsius>>.Failure(new ArgumentException("Access mode must be specified", nameof(mode)));
       }

@@ -40,7 +40,7 @@ public class WeatherFileAccessor: WeatherAccessorBase
     return Encoding.UTF8.GetString(content);
   }
 
-  protected override void ValidateArgument(string? argument)
+  private static void ValidateArgument(string? argument)
   {
     if (argument == null)
     {
@@ -52,7 +52,7 @@ public class WeatherFileAccessor: WeatherAccessorBase
       throw new ArgumentException("Argument cannot be an empty string.", nameof(argument));
     }
 
-    if (argument.Length > 100)
+    if (argument.Length > 200)
     {
       throw new ArgumentException("Argument cannot exceed 100 characters.", nameof(argument));
     }

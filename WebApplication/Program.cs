@@ -1,5 +1,2 @@
-using (var scope = ServiceCollection.CreateScope())
-{
-   var services = new ServiceCollection().AddServices();
-   // ... other code ...
-}
+using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
